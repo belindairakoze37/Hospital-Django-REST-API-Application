@@ -9,11 +9,12 @@ import DoctorList from './components/doctors/DoctorList';
 import AppointmentList from './components/appointments/AppointmentList';
 import AppointmentForm from './components/appointments/AppointmentForm';
 import Navbar from './components/common/Navbar';
+import LoadingSpinner from './components/common/LoadingSpinner';
 import './styles/index.css';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   return user ? children : <Navigate to="/login" />;
 };
 
