@@ -1,5 +1,6 @@
 // src/components/dashboard/StatsCard.jsx
 import React from 'react';
+import { TrendingUp } from 'lucide-react';
 
 const StatsCard = ({ title, value, icon: Icon, color, bg }) => {
   return (

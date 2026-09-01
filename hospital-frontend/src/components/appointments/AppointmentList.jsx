@@ -1,7 +1,7 @@
 // src/components/appointments/AppointmentList.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, User, UserMd, X, Check, MoreVertical, Plus, Filter, Search } from 'lucide-react';
+import { Calendar, Clock, User, Stethoscope, X, Check, MoreVertical, Plus, Filter, Search } from 'lucide-react';
 import api from '../../api/axios';
 
 const AppointmentList = ({ limit }) => {
@@ -18,7 +18,7 @@ const AppointmentList = ({ limit }) => {
   const fetchAppointments = async () => {
     try {
       const response = await api.get('appointments/');
-      let data = response.data;
+      let data = response.data.results || response.data;
       if (limit) {
         data = data.slice(0, limit);
       }
@@ -62,8 +62,8 @@ const AppointmentList = ({ limit }) => {
   const filteredAppointments = appointments.filter(app => {
     const matchesStatus = filter === 'all' || app.status === filter;
     const matchesSearch = 
-      app.patient_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.doctor_name.toLowerCase().includes(searchTerm.toLowerCase());
+      (app.patient_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (app.doctor_name || '').toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
@@ -122,26 +122,26 @@ const AppointmentList = ({ limit }) => {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(appointment.status)}`}>
-                    {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                    {appointment.status?.charAt(0).toUpperCase() + appointment.status?.slice(1) || 'Unknown'}
                   </span>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    {new Date(appointment.appointment_date).toLocaleDateString()}
+                    {appointment.appointment_date ? new Date(appointment.appointment_date).toLocaleDateString() : 'N/A'}
                   </span>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    {new Date(appointment.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {appointment.appointment_date ? new Date(appointment.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2 text-gray-700">
                     <User className="w-4 h-4 text-primary-500" />
-                    <span className="font-medium">{appointment.patient_name}</span>
+                    <span className="font-medium">{appointment.patient_name || 'Unknown Patient'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-700">
-                    <UserMd className="w-4 h-4 text-accent-500" />
-                    <span>{appointment.doctor_name}</span>
+                    <Stethoscope className="w-4 h-4 text-accent-500" />
+                    <span>{appointment.doctor_name || 'Unknown Doctor'}</span>
                   </div>
                 </div>
 

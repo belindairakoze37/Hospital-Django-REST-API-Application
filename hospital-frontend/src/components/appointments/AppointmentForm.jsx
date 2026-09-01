@@ -1,7 +1,7 @@
 // src/components/appointments/AppointmentForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Clock, User, UserMd, FileText, X } from 'lucide-react';
+import { Calendar, Clock, User, Stethoscope, FileText, X } from 'lucide-react';
 import api from '../../api/axios';
 
 const AppointmentForm = () => {
@@ -33,8 +33,8 @@ const AppointmentForm = () => {
         api.get('patients/'),
         api.get('doctors/'),
       ]);
-      setPatients(patientsRes.data);
-      setDoctors(doctorsRes.data);
+      setPatients(patientsRes.data.results || patientsRes.data);
+      setDoctors(doctorsRes.data.results || doctorsRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -46,8 +46,8 @@ const AppointmentForm = () => {
       const data = response.data;
       setFormData({
         ...data,
-        appointment_date: data.appointment_date.split('T')[0],
-        appointment_time: data.appointment_date.split('T')[1].slice(0, 5),
+        appointment_date: data.appointment_date?.split('T')[0] || '',
+        appointment_time: data.appointment_date?.split('T')[1]?.slice(0, 5) || '',
       });
     } catch (error) {
       console.error('Error fetching appointment:', error);
@@ -73,6 +73,7 @@ const AppointmentForm = () => {
       navigate('/appointments');
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save appointment');
+      console.error('Error saving appointment:', error);
     } finally {
       setLoading(false);
     }
@@ -126,7 +127,7 @@ const AppointmentForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <UserMd className="w-4 h-4 inline mr-1" /> Doctor
+              <Stethoscope className="w-4 h-4 inline mr-1" /> Doctor
             </label>
             <select
               name="doctor"

@@ -1,6 +1,6 @@
 // src/components/dashboard/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { Users, UserMd, CalendarCheck, Clock, TrendingUp, Activity } from 'lucide-react';
+import { Users, Stethoscope, CalendarCheck, Clock, TrendingUp, Activity } from 'lucide-react';
 import api from '../../api/axios';
 import StatsCard from './StatsCard';
 import AppointmentList from '../appointments/AppointmentList';
@@ -25,13 +25,21 @@ const Dashboard = () => {
         api.get('doctors/'),
         api.get('appointments/'),
       ]);
+      
+      const patientsData = patients.data.results || patients.data;
+      const doctorsData = doctors.data.results || doctors.data;
+      const appointmentsData = appointments.data.results || appointments.data;
+      
+      const today = new Date().toDateString();
+      const todayAppointments = appointmentsData.filter(
+        app => app.appointment_date && new Date(app.appointment_date).toDateString() === today
+      );
+
       setStats({
-        totalPatients: patients.data.count || patients.data.length,
-        totalDoctors: doctors.data.count || doctors.data.length,
-        totalAppointments: appointments.data.count || appointments.data.length,
-        todayAppointments: appointments.data.filter(
-          app => new Date(app.appointment_date).toDateString() === new Date().toDateString()
-        ).length,
+        totalPatients: patientsData.length || 0,
+        totalDoctors: doctorsData.length || 0,
+        totalAppointments: appointmentsData.length || 0,
+        todayAppointments: todayAppointments.length || 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -51,7 +59,7 @@ const Dashboard = () => {
     {
       title: 'Total Doctors',
       value: stats.totalDoctors,
-      icon: UserMd,
+      icon: Stethoscope,
       color: 'from-purple-500 to-purple-600',
       bg: 'bg-purple-50',
     },
@@ -118,7 +126,7 @@ const Dashboard = () => {
               Register Patient
             </button>
             <button className="w-full btn-secondary text-sm flex items-center justify-center gap-2">
-              <UserMd className="w-4 h-4" />
+              <Stethoscope className="w-4 h-4" />
               Add Doctor
             </button>
           </div>

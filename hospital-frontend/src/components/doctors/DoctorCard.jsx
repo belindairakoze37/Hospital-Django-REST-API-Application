@@ -1,6 +1,6 @@
 // src/components/doctors/DoctorCard.jsx
 import React from 'react';
-import { UserMd, Mail, Building, Edit, Trash2, Stethoscope, Calendar } from 'lucide-react';
+import { Stethoscope, Mail, Building, Edit, Trash2, Calendar, User } from 'lucide-react';
 import api from '../../api/axios';
 
 const DoctorCard = ({ doctor, onUpdate }) => {
@@ -20,7 +20,7 @@ const DoctorCard = ({ doctor, onUpdate }) => {
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
-            {doctor.first_name[0]}{doctor.last_name[0]}
+            {doctor.first_name?.[0] || ''}{doctor.last_name?.[0] || ''}
           </div>
           <div>
             <h3 className="font-semibold text-gray-800">
@@ -28,7 +28,7 @@ const DoctorCard = ({ doctor, onUpdate }) => {
             </h3>
             <span className="text-xs text-primary-600 font-medium flex items-center gap-1">
               <Stethoscope className="w-3 h-3" />
-              {doctor.specialization}
+              {doctor.specialization || 'General'}
             </span>
           </div>
         </div>
@@ -47,15 +47,15 @@ const DoctorCard = ({ doctor, onUpdate }) => {
 
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2 text-gray-600">
-          <Mail className="w-4 h-4 text-purple-500" />
-          <span className="truncate">{doctor.email}</span>
+          <Mail className="w-4 h-4 text-purple-500 flex-shrink-0" />
+          <span className="truncate">{doctor.email || 'No email'}</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600">
-          <Building className="w-4 h-4 text-blue-500" />
-          <span>{doctor.department_name || 'Department ' + doctor.department}</span>
+          <Building className="w-4 h-4 text-blue-500 flex-shrink-0" />
+          <span>{doctor.department_name || 'Department ' + (doctor.department || '')}</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600">
-          <Calendar className="w-4 h-4 text-gray-400" />
+          <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
           <span className="text-xs text-gray-500">Member since 2024</span>
         </div>
       </div>

@@ -1,6 +1,6 @@
 // src/components/doctors/DoctorList.jsx
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, UserMd, Mail, Building, Edit, Trash2, Stethoscope } from 'lucide-react';
+import { Plus, Search, Stethoscope, Mail, Building, Edit, Trash2, User } from 'lucide-react';
 import api from '../../api/axios';
 import DoctorCard from './DoctorCard';
 
@@ -16,7 +16,8 @@ const DoctorList = () => {
   const fetchDoctors = async () => {
     try {
       const response = await api.get('doctors/');
-      setDoctors(response.data);
+      const doctorData = response.data.results || response.data;
+      setDoctors(doctorData);
     } catch (error) {
       console.error('Error fetching doctors:', error);
     } finally {
@@ -26,8 +27,8 @@ const DoctorList = () => {
 
   const filteredDoctors = doctors.filter(doctor =>
     `${doctor.first_name} ${doctor.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.department_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    (doctor.specialization || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (doctor.department_name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -73,7 +74,7 @@ const DoctorList = () => {
 
       {filteredDoctors.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          <UserMd className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+          <Stethoscope className="w-16 h-16 mx-auto text-gray-300 mb-4" />
           <p className="text-lg">No doctors found</p>
           <p className="text-sm">Try adjusting your search</p>
         </div>
