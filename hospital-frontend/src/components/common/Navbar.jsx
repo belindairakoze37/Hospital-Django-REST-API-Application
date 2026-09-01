@@ -1,6 +1,6 @@
 // src/components/common/Navbar.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Heart, LogOut, User, Menu, X, Bell, Settings } from 'lucide-react';
 import { useAuth } from '../../context/authcontext';
 
@@ -8,6 +8,12 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Don't show navbar on home page or login page
+  if (location.pathname === '/' || location.pathname === '/login') {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();

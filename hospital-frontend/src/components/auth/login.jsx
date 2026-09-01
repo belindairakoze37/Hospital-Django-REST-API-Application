@@ -93,11 +93,7 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Demo credentials: <span className="font-mono bg-gray-100 px-2 py-1 rounded">admin / admin123</span>
-          </p>
-        </div>
+        
       </div>
     </div>
   );

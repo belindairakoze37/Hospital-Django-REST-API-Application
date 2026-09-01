@@ -1,3 +1,4 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import api from '../api/axios';
 
@@ -12,10 +13,23 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
-      // You can fetch user data here
-      setUser({ isAuthenticated: true });
+      // Verify token is valid by making a request
+      api.get('patients/')
+        .then(() => {
+          setUser({ isAuthenticated: true });
+        })
+        .catch(() => {
+          // Token is invalid
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          setUser(null);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = async (username, password) => {
