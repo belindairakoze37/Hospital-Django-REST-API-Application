@@ -42,6 +42,18 @@ class PatientViewSet(viewsets.ModelViewSet):
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def upcoming_appointments(self, request, pk=None):
+        """Get upcoming appointments for a patient"""
+        from django.utils import timezone
+        patient = self.get_object()
+        appointments = patient.appointments.filter(
+            appointment_date__gte=timezone.now(),
+            status='scheduled'
+        ).order_by('appointment_date')
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
+
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
@@ -58,3 +70,22 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         appointment.status = 'cancelled'
         appointment.save()
         return Response({'status': 'Appointment cancelled'})
+
+    @action(detail=False, methods=['get'])
+    def upcoming(self, request):
+        """Get all upcoming appointments"""
+        from django.utils import timezone
+        upcoming_appointments = self.get_queryset().filter(
+            appointment_date__gte=timezone.now(),
+            status='scheduled'
+        ).order_by('appointment_date')[:10]
+        serializer = self.get_serializer(upcoming_appointments, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['patch'])
+    def complete(self, request, pk=None):
+        """Mark appointment as completed"""
+        appointment = self.get_object()
+        appointment.status = 'completed'
+        appointment.save()
+        return Response({'status': 'Appointment completed'})
