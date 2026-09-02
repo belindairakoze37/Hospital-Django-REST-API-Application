@@ -3,13 +3,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/authcontext';
 import Home from './components/home';
-import Login from './components/auth/Login';
+import Login from './components/auth/login';
 import Dashboard from './components/dashboard/Dashboard';
 import PatientList from './components/patients/PatientList';
 import DoctorList from './components/doctors/DoctorList';
 import AppointmentList from './components/appointments/AppointmentList';
 import AppointmentForm from './components/appointments/AppointmentForm';
-import Navbar from './components/common/Navbar';
+import Sidebar from './components/common/Sidebar';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import './styles/index.css';
 
@@ -43,13 +43,27 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+// Layout with Sidebar
+const DashboardLayout = ({ children }) => {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+      <main className="lg:ml-64 min-h-screen">
+        <div className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <AuthProvider>
         <div className="min-h-screen">
           <Routes>
-            {/* Public Routes - accessible when NOT logged in */}
+            {/* Public Routes */}
             <Route 
               path="/" 
               element={
@@ -67,15 +81,14 @@ function App() {
               } 
             />
             
-            {/* Private Routes - require authentication */}
+            {/* Private Routes with Sidebar */}
             <Route
               path="/dashboard"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <Dashboard />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
@@ -83,10 +96,9 @@ function App() {
               path="/patients"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <PatientList />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
@@ -94,10 +106,9 @@ function App() {
               path="/doctors"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <DoctorList />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
@@ -105,10 +116,9 @@ function App() {
               path="/appointments"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <AppointmentList />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
@@ -116,10 +126,9 @@ function App() {
               path="/appointments/new"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <AppointmentForm />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
@@ -127,10 +136,9 @@ function App() {
               path="/appointments/edit/:id"
               element={
                 <PrivateRoute>
-                  <Navbar />
-                  <div className="pt-16">
+                  <DashboardLayout>
                     <AppointmentForm />
-                  </div>
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             />
