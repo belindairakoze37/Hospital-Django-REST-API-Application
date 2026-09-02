@@ -2,6 +2,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/authcontext';
+import Notifications from './components/notifications/Notifications';
+import Settings from './components/settings/Settings';
 import Home from './components/home';
 import Login from './components/auth/login';
 import Dashboard from './components/dashboard/Dashboard';
@@ -72,6 +74,27 @@ function App() {
                 </PublicRoute>
               } 
             />
+
+            <Route
+  path="/notifications"
+  element={
+    <PrivateRoute>
+      <DashboardLayout>
+        <Notifications />
+      </DashboardLayout>
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/settings"
+  element={
+    <PrivateRoute>
+      <DashboardLayout>
+        <Settings />
+      </DashboardLayout>
+    </PrivateRoute>
+  }
+/>
             <Route 
               path="/login" 
               element={
@@ -149,6 +172,8 @@ function App() {
         </div>
       </AuthProvider>
     </Router>
+
+    
   );
 }
 
