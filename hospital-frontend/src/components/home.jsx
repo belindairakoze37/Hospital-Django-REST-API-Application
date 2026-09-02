@@ -111,24 +111,8 @@ const Home = () => {
       </section>
 
       
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-primary-600 to-accent-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Ready to Transform Your Healthcare Management?
-          </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of healthcare professionals who trust MediCare to streamline their operations and deliver exceptional patient care.
-          </p>
-          <Link 
-            to="/login" 
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold hover:shadow-2xl transition-all duration-300 hover:scale-105"
-          >
-            Get Started Now
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
+      
+     
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
