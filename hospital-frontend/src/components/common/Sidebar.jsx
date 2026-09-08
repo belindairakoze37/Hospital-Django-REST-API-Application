@@ -1,6 +1,6 @@
 // src/components/common/Sidebar.jsx
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
   LayoutDashboard, 
@@ -15,21 +15,24 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useAuth } from '../../context/authcontext';
+import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useLanguage();
 
   const navItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/patients', icon: Users, label: 'Patients' },
-    { path: '/doctors', icon: Stethoscope, label: 'Doctors' },
-    { path: '/appointments', icon: Calendar, label: 'Appointments' },
-    { path: '/notifications', icon: Bell, label: 'Notifications' },
-    { path: '/settings', icon: Settings, label: 'Settings' },
+    { path: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' },
+    { path: '/patients', icon: Users, labelKey: 'patients' },
+    { path: '/doctors', icon: Stethoscope, labelKey: 'doctors' },
+    { path: '/appointments', icon: Calendar, labelKey: 'appointments' },
+    { path: '/notifications', icon: Bell, labelKey: 'notifications' },
+    { path: '/settings', icon: Settings, labelKey: 'settings' },
   ];
 
   const toggleSidebar = () => {
@@ -42,6 +45,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     logout();
+    navigate('/login');
   };
 
   return (
@@ -75,8 +79,8 @@ const Sidebar = () => {
           </div>
           {!isCollapsed && (
             <div>
-              <span className="text-xl font-bold gradient-text">MediCare</span>
-              <span className="text-xs text-gray-500 block">Hospital Management</span>
+              <span className="text-xl font-bold gradient-text">{t('appName')}</span>
+              <span className="text-xs text-gray-500 block">{t('tagline')}</span>
             </div>
           )}
         </div>
@@ -121,12 +125,12 @@ const Sidebar = () => {
                 }`} />
                 {!isCollapsed && (
                   <span className={`text-sm font-medium ${isActive ? 'text-white' : ''}`}>
-                    {item.label}
+                    {t(item.labelKey)}
                   </span>
                 )}
                 {isCollapsed && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    {item.label}
+                    {t(item.labelKey)}
                   </div>
                 )}
               </Link>
@@ -143,10 +147,10 @@ const Sidebar = () => {
             }`}
           >
             <LogOut className="w-5 h-5" />
-            {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
+            {!isCollapsed && <span className="text-sm font-medium">{t('logout')}</span>}
             {isCollapsed && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Logout
+                {t('logout')}
               </div>
             )}
           </button>

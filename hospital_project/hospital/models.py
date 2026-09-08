@@ -56,3 +56,33 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.patient} with {self.doctor} on {self.appointment_date}"
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = (
+        ('appointment_created', 'Appointment Created'),
+        ('appointment_updated', 'Appointment Updated'),
+        ('appointment_cancelled', 'Appointment Cancelled'),
+        ('appointment_reminder', 'Appointment Reminder'),
+        ('patient_registered', 'Patient Registered'),
+        ('doctor_assigned', 'Doctor Assigned'),
+    )
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    read = models.BooleanField(default=False)
+    link = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.title} - {self.created_at}"
+    
+    def mark_as_read(self):
+        self.read = True
+        self.save()

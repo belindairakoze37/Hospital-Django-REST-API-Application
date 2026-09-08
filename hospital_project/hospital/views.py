@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, permissions,status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -12,7 +12,96 @@ from .serializers import (
     PatientSerializer,
 )
 
+from django.contrib.auth.models import User
+    
+from .serializers import UserSerializer
+
+from .models import Notification
+from .serializers import NotificationSerializer
+
+
 # create your views here.
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Regular users can only see themselves
+        if self.request.user.is_superuser:
+            return User.objects.all()
+        return User.objects.filter(id=self.request.user.id)
+
+    @action(detail=False, methods=['get', 'put', 'patch'])
+    def me(self, request):
+        """Get or update the current user's profile"""
+        user = request.user
+        
+        if request.method == 'GET':
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        
+        elif request.method in ['PUT', 'PATCH']:
+            serializer = self.get_serializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                # Remove username from update data if it exists
+                if 'username' in serializer.validated_data:
+                    del serializer.validated_data['username']
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def change_password(self, request):
+        """Change user's password"""
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response(
+                {'error': 'Both old and new passwords are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.check_password(old_password):
+            return Response(
+                {'error': 'Current password is incorrect'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(new_password) < 8:
+            return Response(
+                {'error': 'Password must be at least 8 characters long'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'})
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Return notifications for the current user
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+    
+    @action(detail=False, methods=['post'])
+    def mark_all_read(self, request):
+        notifications = Notification.objects.filter(user=request.user, read=False)
+        count = notifications.update(read=True)
+        return Response({'message': f'{count} notifications marked as read', 'count': count})
+    
+    @action(detail=True, methods=['post'])
+    def mark_read(self, request, pk=None):
+        notification = self.get_object()
+        notification.mark_as_read()
+        return Response({'message': 'Notification marked as read'})
+    
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer

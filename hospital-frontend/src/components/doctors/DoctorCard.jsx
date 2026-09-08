@@ -1,9 +1,12 @@
 // src/components/doctors/DoctorCard.jsx
 import React from 'react';
-import { Stethoscope, Mail, Building, Edit, Trash2, Calendar, User } from 'lucide-react';
+import { Stethoscope, Mail, Building, Edit, Trash2, Calendar, User, Phone } from 'lucide-react';
 import api from '../../api/axios';
+import { useLanguage } from '../../context/LanguageContext';
 
-const DoctorCard = ({ doctor, onUpdate }) => {
+const DoctorCard = ({ doctor, onUpdate, onEdit, onDelete }) => {
+  const { t } = useLanguage();
+
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete Dr. ${doctor.first_name} ${doctor.last_name}?`)) {
       try {
@@ -11,6 +14,7 @@ const DoctorCard = ({ doctor, onUpdate }) => {
         onUpdate();
       } catch (error) {
         console.error('Error deleting doctor:', error);
+        alert('Failed to delete doctor. Please try again.');
       }
     }
   };
@@ -33,12 +37,17 @@ const DoctorCard = ({ doctor, onUpdate }) => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors">
+          <button 
+            onClick={onEdit}
+            className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+            title={t('editUser')}
+          >
             <Edit className="w-4 h-4" />
           </button>
           <button
             onClick={handleDelete}
             className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
+            title={t('deleteUser')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -54,6 +63,12 @@ const DoctorCard = ({ doctor, onUpdate }) => {
           <Building className="w-4 h-4 text-blue-500 flex-shrink-0" />
           <span>{doctor.department_name || 'Department ' + (doctor.department || '')}</span>
         </div>
+        {doctor.phone && (
+          <div className="flex items-center gap-2 text-gray-600">
+            <Phone className="w-4 h-4 text-green-500 flex-shrink-0" />
+            <span>{doctor.phone}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2 text-gray-600">
           <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
           <span className="text-xs text-gray-500">Member since 2024</span>

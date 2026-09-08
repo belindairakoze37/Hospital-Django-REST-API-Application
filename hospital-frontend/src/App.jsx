@@ -1,11 +1,10 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/authcontext';
-import Notifications from './components/notifications/Notifications';
-import Settings from './components/settings/Settings';
-import Home from './components/home';
-import Login from './components/auth/login';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
+import Home from './components/Home';
+import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import PatientList from './components/patients/PatientList';
 import DoctorList from './components/doctors/DoctorList';
@@ -13,6 +12,8 @@ import AppointmentList from './components/appointments/AppointmentList';
 import AppointmentForm from './components/appointments/AppointmentForm';
 import Sidebar from './components/common/Sidebar';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import Settings from './components/settings/Settings';
+import Notifications from './components/notifications/Notifications';
 import './styles/index.css';
 
 // Protected Route - requires authentication
@@ -59,121 +60,121 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
+// ONLY ONE App function - remove any duplicate
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen">
-          <Routes>
-            {/* Public Routes */}
-            <Route 
-              path="/" 
-              element={
-                <PublicRoute>
-                  <Home />
-                </PublicRoute>
-              } 
-            />
-
-            <Route
-  path="/notifications"
-  element={
-    <PrivateRoute>
-      <DashboardLayout>
-        <Notifications />
-      </DashboardLayout>
-    </PrivateRoute>
-  }
-/>
-<Route
-  path="/settings"
-  element={
-    <PrivateRoute>
-      <DashboardLayout>
-        <Settings />
-      </DashboardLayout>
-    </PrivateRoute>
-  }
-/>
-            <Route 
-              path="/login" 
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              } 
-            />
-            
-            {/* Private Routes with Sidebar */}
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <Dashboard />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/patients"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <PatientList />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/doctors"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <DoctorList />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/appointments"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <AppointmentList />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/appointments/new"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <AppointmentForm />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/appointments/edit/:id"
-              element={
-                <PrivateRoute>
-                  <DashboardLayout>
-                    <AppointmentForm />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            />
-            
-            {/* Catch all - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
+        <LanguageProvider>
+          <div className="min-h-screen">
+            <Routes>
+              {/* Public Routes */}
+              <Route 
+                path="/" 
+                element={
+                  <PublicRoute>
+                    <Home />
+                  </PublicRoute>
+                } 
+              />
+              <Route 
+                path="/login" 
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                } 
+              />
+              
+              {/* Private Routes with Sidebar */}
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <Dashboard />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/patients"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <PatientList />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/doctors"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <DoctorList />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/appointments"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <AppointmentList />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/appointments/new"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <AppointmentForm />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/appointments/edit/:id"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <AppointmentForm />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <Settings />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <PrivateRoute>
+                    <DashboardLayout>
+                      <Notifications />
+                    </DashboardLayout>
+                  </PrivateRoute>
+                }
+              />
+              
+              {/* Catch all - redirect to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        </LanguageProvider>
       </AuthProvider>
     </Router>
-
-    
   );
 }
 

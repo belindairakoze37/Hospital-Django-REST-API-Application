@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Search, User, Phone, Calendar, Edit, Trash2, Mail } from 'lucide-react';
 import api from '../../api/axios';
 import PatientForm from './PatientForm';
+import { useLanguage } from '../../context/LanguageContext';
 
 const PatientList = () => {
+  const { t } = useLanguage();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +20,6 @@ const PatientList = () => {
   const fetchPatients = async () => {
     try {
       const response = await api.get('patients/');
-      // Handle both paginated and non-paginated responses
       const patientData = response.data.results || response.data;
       setPatients(patientData);
     } catch (error) {
@@ -67,8 +68,8 @@ const PatientList = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Patients</h1>
-          <p className="text-gray-500 mt-2">Manage your patient records</p>
+          <h1 className="text-3xl font-bold gradient-text">{t('patientManagement')}</h1>
+          <p className="text-gray-500 mt-2">{t('managePatients')}</p>
         </div>
         <button
           onClick={() => {
@@ -78,7 +79,7 @@ const PatientList = () => {
           className="btn-primary flex items-center gap-2 mt-4 md:mt-0"
         >
           <Plus className="w-5 h-5" />
-          Add Patient
+          {t('addPatient')}
         </button>
       </div>
 
@@ -87,7 +88,7 @@ const PatientList = () => {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <input
           type="text"
-          placeholder="Search patients by name or phone..."
+          placeholder={t('searchPatients')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input-field pl-12"
@@ -120,14 +121,14 @@ const PatientList = () => {
                       setShowForm(true);
                     }}
                     className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
-                    title="Edit patient"
+                    title={t('editUser')}
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(patient.id)}
                     className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
-                    title="Delete patient"
+                    title={t('deleteUser')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -142,7 +143,7 @@ const PatientList = () => {
                 {patient.emergency_contact && (
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <span className="truncate">Emergency: {patient.emergency_contact}</span>
+                    <span className="truncate">{t('emergency')}: {patient.emergency_contact}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-gray-600">
@@ -152,7 +153,7 @@ const PatientList = () => {
                 <div className="flex items-center gap-2 text-gray-600">
                   <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <span className="text-xs text-gray-500">
-                    Registered: {formatDate(patient.created_at)}
+                    {t('registered')}: {formatDate(patient.created_at)}
                   </span>
                 </div>
               </div>
@@ -162,8 +163,8 @@ const PatientList = () => {
       ) : (
         <div className="text-center py-12 text-gray-500">
           <User className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <p className="text-lg">No patients found</p>
-          <p className="text-sm">Try adjusting your search or add a new patient</p>
+          <p className="text-lg">{t('noPatients')}</p>
+          <p className="text-sm">{t('addFirstPatient')}</p>
           <button
             onClick={() => {
               setEditingPatient(null);
@@ -172,7 +173,7 @@ const PatientList = () => {
             className="btn-primary mt-4 inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Your First Patient
+            {t('addPatient')}
           </button>
         </div>
       )}

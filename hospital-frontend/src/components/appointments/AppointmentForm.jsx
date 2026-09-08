@@ -1,10 +1,12 @@
 // src/components/appointments/AppointmentForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Clock, User, Stethoscope, FileText, X } from 'lucide-react';
+import { Calendar, Clock, User, Stethoscope, FileText, X, Save } from 'lucide-react';
 import api from '../../api/axios';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AppointmentForm = () => {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -72,15 +74,19 @@ const AppointmentForm = () => {
       }
       navigate('/appointments');
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to save appointment');
       console.error('Error saving appointment:', error);
+      setError(error.response?.data?.message || 'Failed to save appointment');
     } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
@@ -88,7 +94,7 @@ const AppointmentForm = () => {
       <div className="glass-card rounded-3xl p-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold gradient-text">
-            {id ? 'Edit Appointment' : 'Schedule Appointment'}
+            {id ? t('editAppointment') : t('scheduleAppointment')}
           </h1>
           <button
             onClick={() => navigate('/appointments')}
@@ -107,7 +113,7 @@ const AppointmentForm = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <User className="w-4 h-4 inline mr-1" /> Patient
+              <User className="w-4 h-4 inline mr-1" /> {t('patient')} *
             </label>
             <select
               name="patient"
@@ -116,7 +122,7 @@ const AppointmentForm = () => {
               className="input-field"
               required
             >
-              <option value="">Select Patient</option>
+              <option value="">{t('selectPatient')}</option>
               {patients.map((patient) => (
                 <option key={patient.id} value={patient.id}>
                   {patient.first_name} {patient.last_name}
@@ -127,7 +133,7 @@ const AppointmentForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <Stethoscope className="w-4 h-4 inline mr-1" /> Doctor
+              <Stethoscope className="w-4 h-4 inline mr-1" /> {t('doctor')} *
             </label>
             <select
               name="doctor"
@@ -136,10 +142,10 @@ const AppointmentForm = () => {
               className="input-field"
               required
             >
-              <option value="">Select Doctor</option>
+              <option value="">{t('selectDoctor')}</option>
               {doctors.map((doctor) => (
                 <option key={doctor.id} value={doctor.id}>
-                  Dr. {doctor.first_name} {doctor.last_name} - {doctor.specialization}
+                  {t('dr')}. {doctor.first_name} {doctor.last_name} - {doctor.specialization}
                 </option>
               ))}
             </select>
@@ -148,7 +154,7 @@ const AppointmentForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                <Calendar className="w-4 h-4 inline mr-1" /> Date
+                <Calendar className="w-4 h-4 inline mr-1" /> {t('date')} *
               </label>
               <input
                 type="date"
@@ -161,7 +167,7 @@ const AppointmentForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                <Clock className="w-4 h-4 inline mr-1" /> Time
+                <Clock className="w-4 h-4 inline mr-1" /> {t('time')} *
               </label>
               <input
                 type="time"
@@ -176,7 +182,7 @@ const AppointmentForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <FileText className="w-4 h-4 inline mr-1" /> Notes
+              <FileText className="w-4 h-4 inline mr-1" /> {t('notes')}
             </label>
             <textarea
               name="notes"
@@ -184,21 +190,21 @@ const AppointmentForm = () => {
               onChange={handleChange}
               className="input-field"
               rows="4"
-              placeholder="Additional notes or special requirements..."
+              placeholder={t('notesPlaceholder')}
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary w-full flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
           >
             {loading ? (
               <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
             ) : (
               <>
-                <Calendar className="w-5 h-5" />
-                {id ? 'Update Appointment' : 'Schedule Appointment'}
+                <Save className="w-5 h-5" />
+                {id ? t('updateAppointment') : t('scheduleAppointment')}
               </>
             )}
           </button>

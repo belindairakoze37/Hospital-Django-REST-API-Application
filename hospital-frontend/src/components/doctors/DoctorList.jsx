@@ -3,17 +3,23 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Search, Stethoscope, Mail, Building, Edit, Trash2, User } from 'lucide-react';
 import api from '../../api/axios';
 import DoctorCard from './DoctorCard';
+import DoctorForm from './DoctorForm';
+import { useLanguage } from '../../context/LanguageContext';
 
 const DoctorList = () => {
+  const { t } = useLanguage();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [editingDoctor, setEditingDoctor] = useState(null);
 
   useEffect(() => {
     fetchDoctors();
   }, []);
 
   const fetchDoctors = async () => {
+    setLoading(true);
     try {
       const response = await api.get('doctors/');
       const doctorData = response.data.results || response.data;
@@ -22,6 +28,18 @@ const DoctorList = () => {
       console.error('Error fetching doctors:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this doctor?')) {
+      try {
+        await api.delete(`doctors/${id}/`);
+        fetchDoctors();
+      } catch (error) {
+        console.error('Error deleting doctor:', error);
+        alert('Failed to delete doctor. Please try again.');
+      }
     }
   };
 
@@ -44,12 +62,18 @@ const DoctorList = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Doctors</h1>
-          <p className="text-gray-500 mt-2">Manage your medical staff</p>
+          <h1 className="text-3xl font-bold gradient-text">{t('doctorManagement')}</h1>
+          <p className="text-gray-500 mt-2">{t('manageDoctors')}</p>
         </div>
-        <button className="btn-primary flex items-center gap-2 mt-4 md:mt-0">
+        <button 
+          onClick={() => {
+            setEditingDoctor(null);
+            setShowForm(true);
+          }}
+          className="btn-primary flex items-center gap-2 mt-4 md:mt-0"
+        >
           <Plus className="w-5 h-5" />
-          Add Doctor
+          {t('addDoctor')}
         </button>
       </div>
 
@@ -58,7 +82,7 @@ const DoctorList = () => {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <input
           type="text"
-          placeholder="Search doctors by name, specialization, or department..."
+          placeholder={t('searchDoctors')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input-field pl-12"
@@ -68,16 +92,51 @@ const DoctorList = () => {
       {/* Doctor Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredDoctors.map((doctor) => (
-          <DoctorCard key={doctor.id} doctor={doctor} onUpdate={fetchDoctors} />
+          <DoctorCard 
+            key={doctor.id} 
+            doctor={doctor} 
+            onUpdate={fetchDoctors}
+            onEdit={() => {
+              setEditingDoctor(doctor);
+              setShowForm(true);
+            }}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
 
       {filteredDoctors.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <Stethoscope className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <p className="text-lg">No doctors found</p>
-          <p className="text-sm">Try adjusting your search</p>
+          <p className="text-lg">{t('noDoctors')}</p>
+          <p className="text-sm">{t('addDoctor')}</p>
+          <button 
+            onClick={() => {
+              setEditingDoctor(null);
+              setShowForm(true);
+            }}
+            className="btn-primary mt-4 inline-flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {t('addDoctor')}
+          </button>
         </div>
+      )}
+
+      {/* Doctor Form Modal */}
+      {showForm && (
+        <DoctorForm
+          doctor={editingDoctor}
+          onClose={() => {
+            setShowForm(false);
+            setEditingDoctor(null);
+          }}
+          onSuccess={() => {
+            fetchDoctors();
+            setShowForm(false);
+            setEditingDoctor(null);
+          }}
+        />
       )}
     </div>
   );

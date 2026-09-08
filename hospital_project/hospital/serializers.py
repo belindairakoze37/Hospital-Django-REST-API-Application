@@ -1,12 +1,47 @@
 from rest_framework import serializers
+from typing import ClassVar
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
-from .models import Appointment, Department, Doctor, Patient
+from .models import Appointment, Department, Doctor, Notification, Patient
 
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False, validators=[validate_password])
+    
+    class Meta:
+        model = User
+        fields: ClassVar[list] = ['id', 'username', 'email', 'first_name', 'last_name', 'password', 'is_staff', 'is_superuser', 'date_joined']
+        read_only_fields: ClassVar[list] = ['date_joined']
+        extra_kwargs: ClassVar[dict] = {
+            'password': {'write_only': True},
+            'email': {'required': True},
+            'username': {'required': True}
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        user = User.objects.create_user(**validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ('id', 'dept_name', 'floor_number')
+        fields: ClassVar[list] = ('id', 'dept_name', 'floor_number')
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -17,7 +52,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = (
+        fields: ClassVar[list] = (
             'id',
             'first_name',
             'last_name',
@@ -38,7 +73,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = (
+        fields: ClassVar[list] = (
             'id',
             'first_name',
             'last_name',
@@ -64,7 +99,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = (
+        fields: ClassVar[list] = (
             'id',
             'patient',
             'doctor',
@@ -103,3 +138,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+    # hospital/serializers.py - Add this serializer
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'notification_type', 'title', 'message', 'read', 'link', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']

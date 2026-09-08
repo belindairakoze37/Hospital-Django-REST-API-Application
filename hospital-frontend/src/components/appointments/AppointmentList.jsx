@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, User, Stethoscope, X, Check, MoreVertical, Plus, Filter, Search } from 'lucide-react';
 import api from '../../api/axios';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AppointmentList = ({ limit }) => {
+  const { t } = useLanguage();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -84,7 +86,7 @@ const AppointmentList = ({ limit }) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search appointments..."
+              placeholder={t('searchAppointments')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input-field pl-10"
@@ -96,17 +98,17 @@ const AppointmentList = ({ limit }) => {
               onChange={(e) => setFilter(e.target.value)}
               className="input-field w-40"
             >
-              <option value="all">All Status</option>
-              <option value="scheduled">Scheduled</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">{t('allStatus')}</option>
+              <option value="scheduled">{t('scheduled')}</option>
+              <option value="completed">{t('completed')}</option>
+              <option value="cancelled">{t('cancelled')}</option>
             </select>
             <button
               onClick={() => navigate('/appointments/new')}
               className="btn-primary flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              New
+              {t('newAppointment')}
             </button>
           </div>
         </div>
@@ -122,7 +124,7 @@ const AppointmentList = ({ limit }) => {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(appointment.status)}`}>
-                    {appointment.status?.charAt(0).toUpperCase() + appointment.status?.slice(1) || 'Unknown'}
+                    {t(appointment.status || 'scheduled')}
                   </span>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
@@ -137,11 +139,11 @@ const AppointmentList = ({ limit }) => {
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2 text-gray-700">
                     <User className="w-4 h-4 text-primary-500" />
-                    <span className="font-medium">{appointment.patient_name || 'Unknown Patient'}</span>
+                    <span className="font-medium">{appointment.patient_name || t('patient')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-700">
                     <Stethoscope className="w-4 h-4 text-accent-500" />
-                    <span>{appointment.doctor_name || 'Unknown Doctor'}</span>
+                    <span>{appointment.doctor_name || t('doctor')}</span>
                   </div>
                 </div>
 
@@ -156,14 +158,14 @@ const AppointmentList = ({ limit }) => {
                     <button
                       onClick={() => handleComplete(appointment.id)}
                       className="p-2 rounded-lg hover:bg-green-50 text-green-600 transition-colors"
-                      title="Mark as completed"
+                      title={t('completed')}
                     >
                       <Check className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleCancel(appointment.id)}
                       className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
-                      title="Cancel appointment"
+                      title={t('cancelled')}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -184,8 +186,8 @@ const AppointmentList = ({ limit }) => {
       {filteredAppointments.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <p className="text-lg">No appointments found</p>
-          <p className="text-sm">Schedule your first appointment</p>
+          <p className="text-lg">{t('noAppointments')}</p>
+          <p className="text-sm">{t('scheduleFirst')}</p>
         </div>
       )}
     </div>

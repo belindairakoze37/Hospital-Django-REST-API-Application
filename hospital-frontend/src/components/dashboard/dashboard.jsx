@@ -1,11 +1,15 @@
 // src/components/dashboard/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users, Stethoscope, CalendarCheck, Clock, TrendingUp, Activity } from 'lucide-react';
 import api from '../../api/axios';
 import StatsCard from './StatsCard';
 import AppointmentList from '../appointments/AppointmentList';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Dashboard = () => {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalDoctors: 0,
@@ -50,28 +54,28 @@ const Dashboard = () => {
 
   const statCards = [
     {
-      title: 'Total Patients',
+      title: t('totalPatients'),
       value: stats.totalPatients,
       icon: Users,
       color: 'from-blue-500 to-blue-600',
       bg: 'bg-blue-50',
     },
     {
-      title: 'Total Doctors',
+      title: t('totalDoctors'),
       value: stats.totalDoctors,
       icon: Stethoscope,
       color: 'from-purple-500 to-purple-600',
       bg: 'bg-purple-50',
     },
     {
-      title: 'Total Appointments',
+      title: t('totalAppointments'),
       value: stats.totalAppointments,
       icon: CalendarCheck,
       color: 'from-green-500 to-green-600',
       bg: 'bg-green-50',
     },
     {
-      title: "Today's Appointments",
+      title: t('todayAppointments'),
       value: stats.todayAppointments,
       icon: Clock,
       color: 'from-orange-500 to-orange-600',
@@ -91,8 +95,8 @@ const Dashboard = () => {
     <div className="p-8 max-w-7xl mx-auto">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text">Dashboard</h1>
-        <p className="text-gray-500 mt-2">Welcome back! Here's what's happening with your hospital today.</p>
+        <h1 className="text-3xl font-bold gradient-text">{t('dashboardTitle')}</h1>
+        <p className="text-gray-500 mt-2">{t('dashboardWelcome')} {t('dashboardSubtitle')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -106,28 +110,42 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Recent Appointments</h2>
-            <span className="text-sm text-primary-500 cursor-pointer hover:underline">View All</span>
+            <h2 className="text-xl font-semibold text-gray-800">{t('recentAppointments')}</h2>
+            <span 
+              className="text-sm text-primary-500 cursor-pointer hover:underline"
+              onClick={() => navigate('/appointments')}
+            >
+              {t('viewAll')}
+            </span>
           </div>
           <AppointmentList limit={5} />
         </div>
 
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Quick Actions</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t('quickActions')}</h2>
           </div>
           <div className="space-y-3">
-            <button className="w-full btn-primary text-sm flex items-center justify-center gap-2">
+            <button 
+              onClick={() => navigate('/appointments/new')}
+              className="w-full btn-primary text-sm flex items-center justify-center gap-2"
+            >
               <CalendarCheck className="w-4 h-4" />
-              New Appointment
+              {t('newAppointment')}
             </button>
-            <button className="w-full btn-secondary text-sm flex items-center justify-center gap-2">
+            <button 
+              onClick={() => navigate('/patients')}
+              className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
+            >
               <Users className="w-4 h-4" />
-              Register Patient
+              {t('registerPatient')}
             </button>
-            <button className="w-full btn-secondary text-sm flex items-center justify-center gap-2">
+            <button 
+              onClick={() => navigate('/doctors')}
+              className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
+            >
               <Stethoscope className="w-4 h-4" />
-              Add Doctor
+              {t('addDoctor')}
             </button>
           </div>
         </div>

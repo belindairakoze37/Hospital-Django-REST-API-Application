@@ -1,9 +1,10 @@
 /* src/styles/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -83,4 +84,133 @@ body {
 
 .badge-cancelled {
   @apply bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+/* src/styles/index.css - Add these dark theme styles */
+
+/* Dark Theme Variables */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+  --card-bg: #1f2937;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Apply dark theme styles */
+.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.dark .bg-white {
+  background-color: #1f2937;
+}
+
+.dark .bg-gray-50 {
+  background-color: #111827;
+}
+
+.dark .text-gray-800 {
+  color: #f9fafb;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af;
+}
+
+.dark .text-gray-500 {
+  color: #6b7280;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151;
+}
+
+.dark .border-gray-100 {
+  border-color: #374151;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+.dark .input-field {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark .input-field:focus {
+  border-color: #0ea5e9;
+  background-color: #1f2937;
+}
+
+.dark .glass-card {
+  background: rgba(31, 41, 55, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: #374151;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #374151;
+}
+
+.dark .bg-gray-100 {
+  background-color: #374151;
+}
+
+.dark .bg-gray-200 {
+  background-color: #4b5563;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db;
+}
+
+.dark .bg-primary-50 {
+  background-color: #1e293b;
+}
+
+.dark .bg-primary-100 {
+  background-color: #1e293b;
+}
+
+.dark .text-primary-600 {
+  color: #38bdf8;
+}
+
+.dark .text-primary-700 {
+  color: #60a5fa;
+}
+
+.dark .glass-card {
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+}
+
+/* Smooth transition for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
