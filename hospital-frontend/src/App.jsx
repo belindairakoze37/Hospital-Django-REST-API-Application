@@ -60,7 +60,6 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-// ONLY ONE App function - remove any duplicate
 function App() {
   return (
     <Router>

@@ -1,7 +1,7 @@
 // src/components/auth/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/authcontext';
+import { useAuth } from '../../context/AuthContext';
 import { Heart, Stethoscope, Mail, Lock } from 'lucide-react';
 
 const Login = () => {
@@ -16,19 +16,26 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const result = await login(username, password);
-    setLoading(false);
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.error);
+    
+    try {
+      const result = await login(username, password);
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Login failed. Please check your credentials.');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 p-4">
       <div className="glass-card rounded-3xl p-8 w-full max-w-md animate-fade-in">
-        {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 mb-4">
             <Heart className="w-10 h-10 text-white" />
@@ -93,7 +100,11 @@ const Login = () => {
           </button>
         </form>
 
-        
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500">
+            Demo credentials: <span className="font-mono bg-gray-100 px-2 py-1 rounded">admin / admin123</span>
+          </p>
+        </div>
       </div>
     </div>
   );

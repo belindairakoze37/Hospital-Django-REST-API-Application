@@ -38,15 +38,39 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
     setError('');
 
     try {
+      // Validate email domain
+      if (!formData.email.endsWith('@hospital.com')) {
+        setError('Doctor email must be a hospital.com address');
+        setLoading(false);
+        return;
+      }
+
+      // Prepare data for API
+      const submitData = {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        specialization: formData.specialization,
+        department: parseInt(formData.department),
+        email: formData.email,
+        phone: formData.phone || '',
+      };
+
+      console.log('Submitting doctor data:', submitData);
+
       if (doctor) {
-        await api.put(`doctors/${doctor.id}/`, formData);
+        await api.put(`doctors/${doctor.id}/`, submitData);
       } else {
-        await api.post('doctors/', formData);
+        await api.post('doctors/', submitData);
       }
       onSuccess();
     } catch (error) {
       console.error('Error saving doctor:', error);
-      setError(error.response?.data?.message || 'Failed to save doctor');
+      // Show more detailed error
+      const errorMsg = error.response?.data?.email?.[0] || 
+                       error.response?.data?.department?.[0] ||
+                       error.response?.data?.message ||
+                       'Failed to save doctor. Please check all fields are filled correctly.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -126,7 +150,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               value={formData.specialization}
               onChange={handleChange}
               className="input-field"
-              placeholder={t('specializationPlaceholder')}
+              placeholder="e.g., Cardiologist, Pediatrician"
               required
             />
           </div>
@@ -164,6 +188,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               placeholder="doctor@hospital.com"
               required
             />
+            <p className="text-xs text-gray-500 mt-1">Must end with @hospital.com</p>
           </div>
 
           <div>
@@ -176,7 +201,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               value={formData.phone}
               onChange={handleChange}
               className="input-field"
-              placeholder={t('phonePlaceholder')}
+              placeholder="e.g., +256XXXXXXXXX"
             />
           </div>
 

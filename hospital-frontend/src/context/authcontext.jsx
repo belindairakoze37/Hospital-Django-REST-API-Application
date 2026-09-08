@@ -20,10 +20,28 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ isAuthenticated: true });
+      // Verify token is valid
+      verifyToken(token);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
+
+  const verifyToken = async (token) => {
+    try {
+      // Try to get current user info to verify token
+      await api.get('users/me/');
+      setUser({ isAuthenticated: true });
+    } catch (error) {
+      // Token is invalid
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (username, password) => {
     try {
