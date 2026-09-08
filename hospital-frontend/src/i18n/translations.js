@@ -1,4 +1,3 @@
-// src/i18n/translations.js
 export const translations = {
   English: {
     // App
@@ -166,6 +165,32 @@ export const translations = {
     dr: 'Dr',
     updateAppointment: 'Update Appointment',
     notesPlaceholder: 'Additional notes or special requirements...',
+
+
+    // Add to each language object
+
+// Department Management
+departments: 'Departments',
+departmentManagement: 'Department Management',
+manageDepartments: 'Manage hospital departments',
+addDepartment: 'Add Department',
+editDepartment: 'Edit Department',
+departmentName: 'Department Name',
+departmentNamePlaceholder: 'e.g., Cardiology',
+floorNumber: 'Floor Number',
+floorNumberPlaceholder: 'e.g., 3',
+searchDepartments: 'Search departments by name or floor...',
+noDepartments: 'No departments found',
+addFirstDepartment: 'Add your first department',
+departmentCreated: 'Department created successfully!',
+departmentUpdated: 'Department updated successfully!',
+departmentDeleted: 'Department deleted successfully!',
+confirmDelete: 'Are you sure you want to delete this department?',
+update: 'Update',
+create: 'Create',
+cancel: 'Cancel',
+edit: 'Edit',
+delete: 'Delete',
     
     // Notifications
     notifications: 'Notifications',
@@ -312,6 +337,29 @@ export const translations = {
     registerPatient: 'Sajili Mgonjwa',
     addDoctor: 'Ongeza Daktari',
     viewAll: 'Tazama Zote',
+
+// department Management
+  departments: 'Idara',
+  departmentManagement: 'Usimamizi wa Idara',
+manageDepartments: 'Dhibiti idara za hospitali',
+addDepartment: 'Ongeza Idara',
+editDepartment: 'Hariri Idara',
+departmentName: 'Jina la Idara',
+departmentNamePlaceholder: 'mfano, Moyo',
+floorNumber: 'Nambari ya Ghorofa',
+floorNumberPlaceholder: 'mfano, 3',
+searchDepartments: 'Tafuta idara kwa jina au ghorofa...',
+noDepartments: 'Hakuna idara',
+addFirstDepartment: 'Ongeza idara yako ya kwanza',
+departmentCreated: 'Idara imeundwa!',
+departmentUpdated: 'Idara imesasishwa!',
+departmentDeleted: 'Idara imefutwa!',
+confirmDelete: 'Je, una uhakika unataka kufuta idara hii?',
+update: 'Sasisha',
+create: 'Unda',
+cancel: 'Ghairi',
+edit: 'Hariri',
+delete: 'Futa',
     
     // Patient Management
     patientManagement: 'Usimamizi wa Wagonjwa',
@@ -497,6 +545,29 @@ export const translations = {
     saving: 'Guardando...',
     languageSaved: '¡Configuración de idioma guardada!',
     selectLanguageHint: 'Elige tu idioma preferido para todo el sistema',
+
+// department Management
+    departments: 'Departamentos',
+departmentManagement: 'Gestión de Departamentos',
+manageDepartments: 'Gestionar departamentos del hospital',
+addDepartment: 'Agregar Departamento',
+editDepartment: 'Editar Departamento',
+departmentName: 'Nombre del Departamento',
+departmentNamePlaceholder: 'ej., Cardiología',
+floorNumber: 'Número de Piso',
+floorNumberPlaceholder: 'ej., 3',
+searchDepartments: 'Buscar departamentos por nombre o piso...',
+noDepartments: 'No se encontraron departamentos',
+addFirstDepartment: 'Agrega tu primer departamento',
+departmentCreated: '¡Departamento creado!',
+departmentUpdated: '¡Departamento actualizado!',
+departmentDeleted: '¡Departamento eliminado!',
+confirmDelete: '¿Estás seguro de que quieres eliminar este departamento?',
+update: 'Actualizar',
+create: 'Crear',
+cancel: 'Cancelar',
+edit: 'Editar',
+delete: 'Eliminar',
     
     // Messages
     saveSuccess: '¡Configuración guardada!',
@@ -717,6 +788,30 @@ export const translations = {
     userDeleteSuccess: 'Utilisateur supprimé !',
     passwordMismatch: 'Les nouveaux mots de passe ne correspondent pas',
     passwordTooShort: 'Le mot de passe doit contenir au moins 8 caractères',
+
+
+    // department Management
+    departments: 'Départements',
+departmentManagement: 'Gestion des Départements',
+manageDepartments: 'Gérer les départements de l\'hôpital',
+addDepartment: 'Ajouter un Département',
+editDepartment: 'Modifier le Département',
+departmentName: 'Nom du Département',
+departmentNamePlaceholder: 'ex., Cardiologie',
+floorNumber: 'Numéro d\'Étage',
+floorNumberPlaceholder: 'ex., 3',
+searchDepartments: 'Rechercher des départements par nom ou étage...',
+noDepartments: 'Aucun département trouvé',
+addFirstDepartment: 'Ajoutez votre premier département',
+departmentCreated: 'Département créé !',
+departmentUpdated: 'Département mis à jour !',
+departmentDeleted: 'Département supprimé !',
+confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce département ?',
+update: 'Mettre à Jour',
+create: 'Créer',
+cancel: 'Annuler',
+edit: 'Modifier',
+delete: 'Supprimer',
     
     // Dashboard
     dashboardTitle: 'Tableau de Bord',
@@ -927,6 +1022,29 @@ export const translations = {
     userDeleteSuccess: 'Benutzer gelöscht!',
     passwordMismatch: 'Die neuen Passwörter stimmen nicht überein',
     passwordTooShort: 'Das Passwort muss mindestens 8 Zeichen lang sein',
+
+//department Management
+    departments: 'Abteilungen',
+departmentManagement: 'Abteilungsverwaltung',
+manageDepartments: 'Verwalten Sie Krankenhausabteilungen',
+addDepartment: 'Abteilung Hinzufügen',
+editDepartment: 'Abteilung Bearbeiten',
+departmentName: 'Abteilungsname',
+departmentNamePlaceholder: 'z.B., Kardiologie',
+floorNumber: 'Stockwerksnummer',
+floorNumberPlaceholder: 'z.B., 3',
+searchDepartments: 'Suche nach Abteilungen nach Name oder Stockwerk...',
+noDepartments: 'Keine Abteilungen gefunden',
+addFirstDepartment: 'Fügen Sie Ihre erste Abteilung hinzu',
+departmentCreated: 'Abteilung erstellt!',
+departmentUpdated: 'Abteilung aktualisiert!',
+departmentDeleted: 'Abteilung gelöscht!',
+confirmDelete: 'Sind Sie sicher, dass Sie diese Abteilung löschen möchten?',
+update: 'Aktualisieren',
+create: 'Erstellen',
+cancel: 'Abbrechen',
+edit: 'Bearbeiten',
+delete: 'Löschen',
     
     // Dashboard
     dashboardTitle: 'Dashboard',
@@ -1137,6 +1255,30 @@ export const translations = {
     userDeleteSuccess: 'Usuário excluído!',
     passwordMismatch: 'As novas senhas não coincidem',
     passwordTooShort: 'A senha deve ter pelo menos 8 caracteres',
+
+    // department Management
+
+    departments: 'Departamentos',
+departmentManagement: 'Gestão de Departamentos',
+manageDepartments: 'Gerenciar departamentos do hospital',
+addDepartment: 'Adicionar Departamento',
+editDepartment: 'Editar Departamento',
+departmentName: 'Nome do Departamento',
+departmentNamePlaceholder: 'ex., Cardiologia',
+floorNumber: 'Número do Andar',
+floorNumberPlaceholder: 'ex., 3',
+searchDepartments: 'Pesquisar departamentos por nome ou andar...',
+noDepartments: 'Nenhum departamento encontrado',
+addFirstDepartment: 'Adicione seu primeiro departamento',
+departmentCreated: 'Departamento criado!',
+departmentUpdated: 'Departamento atualizado!',
+departmentDeleted: 'Departamento excluído!',
+confirmDelete: 'Tem certeza que deseja excluir este departamento?',
+update: 'Atualizar',
+create: 'Criar',
+cancel: 'Cancelar',
+edit: 'Editar',
+delete: 'Excluir',
     
     // Dashboard
     dashboardTitle: 'Painel',
@@ -1347,6 +1489,31 @@ export const translations = {
     userDeleteSuccess: 'Utente eliminato!',
     passwordMismatch: 'Le nuove password non corrispondono',
     passwordTooShort: 'La password deve essere di almeno 8 caratteri',
+
+
+    // department Management
+
+    departments: 'Dipartimenti',
+departmentManagement: 'Gestione Dipartimenti',
+manageDepartments: 'Gestisci i dipartimenti dell\'ospedale',
+addDepartment: 'Aggiungi Dipartimento',
+editDepartment: 'Modifica Dipartimento',
+departmentName: 'Nome del Dipartimento',
+departmentNamePlaceholder: 'es., Cardiologia',
+floorNumber: 'Numero del Piano',
+floorNumberPlaceholder: 'es., 3',
+searchDepartments: 'Cerca dipartimenti per nome o piano...',
+noDepartments: 'Nessun dipartimento trovato',
+addFirstDepartment: 'Aggiungi il tuo primo dipartimento',
+departmentCreated: 'Dipartimento creato!',
+departmentUpdated: 'Dipartimento aggiornato!',
+departmentDeleted: 'Dipartimento eliminato!',
+confirmDelete: 'Sei sicuro di voler eliminare questo dipartimento?',
+update: 'Aggiorna',
+create: 'Crea',
+cancel: 'Annulla',
+edit: 'Modifica',
+delete: 'Elimina',
     
     // Dashboard
     dashboardTitle: 'Dashboard',

@@ -1,4 +1,4 @@
-// src/components/common/Sidebar.jsx
+// src/components/common/Sidebar.jsx - Complete updated version
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Building
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -31,6 +32,7 @@ const Sidebar = () => {
     { path: '/patients', icon: Users, labelKey: 'patients' },
     { path: '/doctors', icon: Stethoscope, labelKey: 'doctors' },
     { path: '/appointments', icon: Calendar, labelKey: 'appointments' },
+    { path: '/departments', icon: Building, labelKey: 'departments' },
     { path: '/notifications', icon: Bell, labelKey: 'notifications' },
     { path: '/settings', icon: Settings, labelKey: 'settings' },
   ];

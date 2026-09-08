@@ -12,6 +12,7 @@ import AppointmentList from './components/appointments/AppointmentList';
 import AppointmentForm from './components/appointments/AppointmentForm';
 import Sidebar from './components/common/Sidebar';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import DepartmentList from './components/departments/DepartmentList';
 import Settings from './components/settings/Settings';
 import Notifications from './components/notifications/Notifications';
 import './styles/index.css';
@@ -76,6 +77,17 @@ function App() {
                   </PublicRoute>
                 } 
               />
+
+              <Route
+  path="/departments"
+  element={
+    <PrivateRoute>
+      <DashboardLayout>
+        <DepartmentList />
+      </DashboardLayout>
+    </PrivateRoute>
+  }
+/>
               <Route 
                 path="/login" 
                 element={
