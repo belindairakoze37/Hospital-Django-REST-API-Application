@@ -14,7 +14,11 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Building
+  Building,
+  ListOrdered,
+  Ticket,
+  Monitor,
+  UserPlus
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -33,6 +37,10 @@ const Sidebar = () => {
     { path: '/doctors', icon: Stethoscope, labelKey: 'doctors' },
     { path: '/appointments', icon: Calendar, labelKey: 'appointments' },
     { path: '/departments', icon: Building, labelKey: 'departments' },
+    { path: '/queue', icon: ListOrdered, labelKey: 'queueManagement', exact: true },
+    { path: '/queue/register', icon: UserPlus, labelKey: 'registerInQueue' },
+    { path: '/queue/my-ticket', icon: Ticket, labelKey: 'myTicket' },
+    { path: '/queue/display', icon: Monitor, labelKey: 'displayBoard' },
     { path: '/notifications', icon: Bell, labelKey: 'notifications' },
     { path: '/settings', icon: Settings, labelKey: 'settings' },
   ];
@@ -110,7 +118,9 @@ const Sidebar = () => {
         {/* Navigation Links */}
         <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-140px)]">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+            const isActive = item.exact
+              ? location.pathname === item.path
+              : location.pathname === item.path || location.pathname.startsWith(item.path + '/');
             return (
               <Link
                 key={item.path}

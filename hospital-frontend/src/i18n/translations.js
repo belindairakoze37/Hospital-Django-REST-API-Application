@@ -1,8 +1,19 @@
+import { queueTranslations } from './queueTranslations.js';
+import { appTranslations } from './appTranslations.js';
+import {
+  browserLanguageMap,
+  languageMetadata,
+  publicTranslations,
+} from './publicTranslations.js';
+
+// Vite injects `import.meta.env`; the Node-based i18n checker does not.
+const isDev = Boolean(import.meta.env?.DEV);
+
 export const translations = {
   English: {
     // App
-    appName: 'MediCare',
-    tagline: 'Hospital Management',
+    appName: 'QueueCare',
+    tagline: 'Smart Hospital Queue Management',
     
     // Navigation
     dashboard: 'Dashboard',
@@ -10,7 +21,6 @@ export const translations = {
     doctors: 'Doctors',
     appointments: 'Appointments',
     settings: 'Settings',
-    notifications: 'Notifications',
     logout: 'Logout',
     
     // Settings Page
@@ -23,8 +33,6 @@ export const translations = {
     profileSettings: 'Profile Settings',
     userManagement: 'User Management',
     notificationPreferences: 'Notification Preferences',
-    securitySettings: 'Security Settings',
-    appearanceSettings: 'Appearance Settings',
     themeSettings: 'Theme Settings',
     languageSettings: 'Language Settings',
     firstName: 'First Name',
@@ -59,9 +67,7 @@ export const translations = {
     twoFactorAuth: 'Two-Factor Authentication',
     twoFactorDesc: 'Add an extra layer of security to your account',
     chooseTheme: 'Choose Theme',
-    light: 'Light',
     dark: 'Dark',
-    system: 'System',
     currentTheme: 'Current theme',
     selectLanguage: 'Select Language',
     currentLanguage: 'Current language',
@@ -74,7 +80,6 @@ export const translations = {
     password: 'Password',
     saveChanges: 'Save Changes',
     saving: 'Saving...',
-    languageSaved: 'Language settings saved successfully!',
     selectLanguageHint: 'Choose your preferred language for the entire system',
     
     // Messages
@@ -142,7 +147,6 @@ export const translations = {
     createDoctor: 'Create Doctor',
     
     // Appointment Management
-    appointmentManagement: 'Appointment Management',
     scheduleAppointment: 'Schedule Appointment',
     searchAppointments: 'Search appointments...',
     allStatus: 'All Status',
@@ -201,44 +205,14 @@ delete: 'Delete',
     noNotifications: 'No notifications yet',
     refresh: 'Refresh',
     viewDetails: 'View Details',
-    justNow: 'Just now',
-    minutesAgo: 'minutes ago',
-    hoursAgo: 'hours ago',
-    daysAgo: 'days ago',
-    yesterday: 'Yesterday',
-    today: 'Today',
-    tomorrow: 'Tomorrow',
-    recently: 'Recently',
     
     // Notification Types
-    appointmentToday: 'Appointment Today',
-    appointmentTodayDesc: 'You have an appointment with {patient} by {doctor} at {time}',
-    appointmentTomorrow: 'Appointment Tomorrow',
-    appointmentTomorrowDesc: 'You have an appointment with {patient} by {doctor} at {time} tomorrow',
-    appointmentReminder: 'Appointment Reminder',
-    appointmentReminderDesc: 'You have an appointment with Dr. Sarah Johnson tomorrow at 10:00 AM',
-    appointmentCompleted: 'Appointment Completed',
-    appointmentCompletedDesc: 'Appointment with {patient} by {doctor} has been completed',
-    appointmentCompletedStatic: 'Appointment with Dr. Emily Brown has been completed',
-    appointmentCancelled: 'Appointment Cancelled',
-    appointmentCancelledDesc: 'Appointment with {patient} has been cancelled',
-    appointmentConfirmed: 'Appointment Confirmed',
-    appointmentConfirmedDesc: 'Your appointment with {doctor} has been confirmed for {date}',
-    newAppointmentScheduled: 'New Appointment Scheduled',
-    newAppointmentScheduledDesc: 'New appointment with {patient} scheduled for {date}',
-    newPatientRegistered: 'New Patient Registered',
-    newPatientRegisteredDesc: '{name} has been registered as a new patient',
-    newPatientRegisteredStatic: 'John Doe has been registered as a new patient',
-    doctorAvailability: 'Doctor Availability',
-    doctorAvailabilityDesc: 'Dr. Michael Chen is now available for appointments',
-    newDoctorAdded: 'New Doctor Added',
-    newDoctorAddedDesc: '{doctor} has been added to the staff',
   },
   
   Kiswahili: {
     // App
-    appName: 'MediCare',
-    tagline: 'Usimamizi wa Hospitali',
+    appName: 'QueueCare',
+    tagline: 'Usimamizi Mahiri wa Foleni Hospitalini',
     
     // Navigation
     dashboard: 'Dashibodi',
@@ -246,7 +220,6 @@ delete: 'Delete',
     doctors: 'Madaktari',
     appointments: 'Miadi',
     settings: 'Mipangilio',
-    notifications: 'Arifa',
     logout: 'Toka',
     
     // Settings Page
@@ -259,8 +232,6 @@ delete: 'Delete',
     profileSettings: 'Mipangilio ya Wasifu',
     userManagement: 'Usimamizi wa Watumiaji',
     notificationPreferences: 'Mapendeleo ya Arifa',
-    securitySettings: 'Mipangilio ya Usalama',
-    appearanceSettings: 'Mipangilio ya Muonekano',
     themeSettings: 'Mipangilio ya Mandhari',
     languageSettings: 'Mipangilio ya Lugha',
     firstName: 'Jina la Kwanza',
@@ -295,9 +266,7 @@ delete: 'Delete',
     twoFactorAuth: 'Uthibitishaji wa Vipengele viwili',
     twoFactorDesc: 'Ongeza safu ya ziada ya usalama kwa akaunti yako',
     chooseTheme: 'Chagua Mandhari',
-    light: 'Nyepesi',
     dark: 'Nzito',
-    system: 'Mfumo',
     currentTheme: 'Mandhari ya sasa',
     selectLanguage: 'Chagua Lugha',
     currentLanguage: 'Lugha ya sasa',
@@ -310,7 +279,6 @@ delete: 'Delete',
     password: 'Nenosiri',
     saveChanges: 'Hifadhi Mabadiliko',
     saving: 'Inahifadhi...',
-    languageSaved: 'Mipangilio ya lugha imehifadhiwa!',
     selectLanguageHint: 'Chagua lugha unayopendelea kwa mfumo mzima',
     
     // Messages
@@ -401,7 +369,6 @@ delete: 'Futa',
     createDoctor: 'Unda Daktari',
     
     // Appointment Management
-    appointmentManagement: 'Usimamizi wa Miadi',
     scheduleAppointment: 'Panga Miadi',
     searchAppointments: 'Tafuta miadi...',
     allStatus: 'Hali Zote',
@@ -434,44 +401,14 @@ delete: 'Futa',
     noNotifications: 'Bado hakuna arifa',
     refresh: 'Sasisha',
     viewDetails: 'Tazama Maelezo',
-    justNow: 'Sasa hivi',
-    minutesAgo: 'dakika zilizopita',
-    hoursAgo: 'saa zilizopita',
-    daysAgo: 'siku zilizopita',
-    yesterday: 'Jana',
-    today: 'Leo',
-    tomorrow: 'Kesho',
-    recently: 'Hivi karibuni',
     
     // Notification Types
-    appointmentToday: 'Miadi Leo',
-    appointmentTodayDesc: 'Una miadi na {patient} na {doctor} saa {time}',
-    appointmentTomorrow: 'Miadi Kesho',
-    appointmentTomorrowDesc: 'Una miadi na {patient} na {doctor} saa {time} kesho',
-    appointmentReminder: 'Kumbusho la Miadi',
-    appointmentReminderDesc: 'Una miadi na Dk. Sarah Johnson kesho saa 10:00 AM',
-    appointmentCompleted: 'Miadi Imekamilika',
-    appointmentCompletedDesc: 'Miadi na {patient} na {doctor} imekamilika',
-    appointmentCompletedStatic: 'Miadi na Dk. Emily Brown imekamilika',
-    appointmentCancelled: 'Miadi Imefutwa',
-    appointmentCancelledDesc: 'Miadi na {patient} imefutwa',
-    appointmentConfirmed: 'Miadi Imethibitishwa',
-    appointmentConfirmedDesc: 'Miadi yako na {doctor} imethibitishwa kwa {date}',
-    newAppointmentScheduled: 'Miadi Mpya Imepangwa',
-    newAppointmentScheduledDesc: 'Miadi mpya na {patient} imepangwa kwa {date}',
-    newPatientRegistered: 'Mgonjwa Mpya Amesajiliwa',
-    newPatientRegisteredDesc: '{name} amesajiliwa kama mgonjwa mpya',
-    newPatientRegisteredStatic: 'John Doe amesajiliwa kama mgonjwa mpya',
-    doctorAvailability: 'Upatikanaji wa Daktari',
-    doctorAvailabilityDesc: 'Dk. Michael Chen sasa anapatikana kwa miadi',
-    newDoctorAdded: 'Daktari Mpya Ameongezwa',
-    newDoctorAddedDesc: '{doctor} ameongezwa kwa wafanyakazi',
   },
   
   Spanish: {
     // App
-    appName: 'MediCare',
-    tagline: 'Gestión Hospitalaria',
+    appName: 'QueueCare',
+    tagline: 'Gestión Inteligente de Colas Hospitalarias',
     
     // Navigation
     dashboard: 'Panel',
@@ -479,7 +416,6 @@ delete: 'Futa',
     doctors: 'Médicos',
     appointments: 'Citas',
     settings: 'Configuración',
-    notifications: 'Notificaciones',
     logout: 'Cerrar Sesión',
     
     // Settings Page
@@ -492,8 +428,6 @@ delete: 'Futa',
     profileSettings: 'Configuración de Perfil',
     userManagement: 'Gestión de Usuarios',
     notificationPreferences: 'Preferencias de Notificaciones',
-    securitySettings: 'Configuración de Seguridad',
-    appearanceSettings: 'Configuración de Apariencia',
     themeSettings: 'Configuración de Tema',
     languageSettings: 'Configuración de Idioma',
     firstName: 'Nombre',
@@ -528,9 +462,7 @@ delete: 'Futa',
     twoFactorAuth: 'Autenticación de Dos Factores',
     twoFactorDesc: 'Añade una capa adicional de seguridad a tu cuenta',
     chooseTheme: 'Elegir Tema',
-    light: 'Claro',
     dark: 'Oscuro',
-    system: 'Sistema',
     currentTheme: 'Tema actual',
     selectLanguage: 'Seleccionar Idioma',
     currentLanguage: 'Idioma actual',
@@ -543,7 +475,6 @@ delete: 'Futa',
     password: 'Contraseña',
     saveChanges: 'Guardar Cambios',
     saving: 'Guardando...',
-    languageSaved: '¡Configuración de idioma guardada!',
     selectLanguageHint: 'Elige tu idioma preferido para todo el sistema',
 
 // department Management
@@ -634,7 +565,6 @@ delete: 'Eliminar',
     createDoctor: 'Crear Médico',
     
     // Appointment Management
-    appointmentManagement: 'Gestión de Citas',
     scheduleAppointment: 'Agendar Cita',
     searchAppointments: 'Buscar citas...',
     allStatus: 'Todos los Estados',
@@ -667,44 +597,14 @@ delete: 'Eliminar',
     noNotifications: 'Aún no hay notificaciones',
     refresh: 'Actualizar',
     viewDetails: 'Ver Detalles',
-    justNow: 'Justo ahora',
-    minutesAgo: 'minutos atrás',
-    hoursAgo: 'horas atrás',
-    daysAgo: 'días atrás',
-    yesterday: 'Ayer',
-    today: 'Hoy',
-    tomorrow: 'Mañana',
-    recently: 'Recientemente',
     
     // Notification Types
-    appointmentToday: 'Cita Hoy',
-    appointmentTodayDesc: 'Tienes una cita con {patient} con {doctor} a las {time}',
-    appointmentTomorrow: 'Cita Mañana',
-    appointmentTomorrowDesc: 'Tienes una cita con {patient} con {doctor} a las {time} mañana',
-    appointmentReminder: 'Recordatorio de Cita',
-    appointmentReminderDesc: 'Tienes una cita con la Dra. Sarah Johnson mañana a las 10:00 AM',
-    appointmentCompleted: 'Cita Completada',
-    appointmentCompletedDesc: 'La cita con {patient} con {doctor} ha sido completada',
-    appointmentCompletedStatic: 'La cita con la Dra. Emily Brown ha sido completada',
-    appointmentCancelled: 'Cita Cancelada',
-    appointmentCancelledDesc: 'La cita con {patient} ha sido cancelada',
-    appointmentConfirmed: 'Cita Confirmada',
-    appointmentConfirmedDesc: 'Tu cita con {doctor} ha sido confirmada para {date}',
-    newAppointmentScheduled: 'Nueva Cita Agendada',
-    newAppointmentScheduledDesc: 'Nueva cita con {patient} agendada para {date}',
-    newPatientRegistered: 'Nuevo Paciente Registrado',
-    newPatientRegisteredDesc: '{name} ha sido registrado como nuevo paciente',
-    newPatientRegisteredStatic: 'John Doe ha sido registrado como nuevo paciente',
-    doctorAvailability: 'Disponibilidad de Médico',
-    doctorAvailabilityDesc: 'El Dr. Michael Chen ya está disponible para citas',
-    newDoctorAdded: 'Nuevo Médico Agregado',
-    newDoctorAddedDesc: '{doctor} ha sido agregado al personal',
   },
   
   French: {
     // App
-    appName: 'MediCare',
-    tagline: 'Gestion Hospitalière',
+    appName: 'QueueCare',
+    tagline: 'Gestion Intelligente des Files d\'Attente Hospitalières',
     
     // Navigation
     dashboard: 'Tableau de Bord',
@@ -712,7 +612,6 @@ delete: 'Eliminar',
     doctors: 'Médecins',
     appointments: 'Rendez-vous',
     settings: 'Paramètres',
-    notifications: 'Notifications',
     logout: 'Déconnexion',
     
     // Settings Page
@@ -725,8 +624,6 @@ delete: 'Eliminar',
     profileSettings: 'Paramètres du Profil',
     userManagement: 'Gestion des Utilisateurs',
     notificationPreferences: 'Préférences de Notification',
-    securitySettings: 'Paramètres de Sécurité',
-    appearanceSettings: 'Paramètres d\'Apparence',
     themeSettings: 'Paramètres du Thème',
     languageSettings: 'Paramètres de Langue',
     firstName: 'Prénom',
@@ -761,9 +658,7 @@ delete: 'Eliminar',
     twoFactorAuth: 'Authentification à Deux Facteurs',
     twoFactorDesc: 'Ajoutez une couche supplémentaire de sécurité à votre compte',
     chooseTheme: 'Choisir un Thème',
-    light: 'Clair',
     dark: 'Sombre',
-    system: 'Système',
     currentTheme: 'Thème actuel',
     selectLanguage: 'Sélectionner la Langue',
     currentLanguage: 'Langue actuelle',
@@ -776,7 +671,6 @@ delete: 'Eliminar',
     password: 'Mot de Passe',
     saveChanges: 'Enregistrer les Modifications',
     saving: 'Enregistrement...',
-    languageSaved: 'Paramètres de langue enregistrés !',
     selectLanguageHint: 'Choisissez votre langue préférée pour tout le système',
     
     // Messages
@@ -817,7 +711,7 @@ delete: 'Supprimer',
     dashboardTitle: 'Tableau de Bord',
     dashboardWelcome: 'Bon retour !',
     dashboardSubtitle: 'Voici ce qui se passe dans votre hôpital aujourd\'hui.',
-    totalPatients: 'Total Patients',
+    totalPatients: 'Total des patients',
     totalDoctors: 'Total Médecins',
     totalAppointments: 'Total Rendez-vous',
     todayAppointments: 'Rendez-vous du Jour',
@@ -868,7 +762,6 @@ delete: 'Supprimer',
     createDoctor: 'Créer un Médecin',
     
     // Appointment Management
-    appointmentManagement: 'Gestion des Rendez-vous',
     scheduleAppointment: 'Planifier un Rendez-vous',
     searchAppointments: 'Rechercher des rendez-vous...',
     allStatus: 'Tous les Statuts',
@@ -901,44 +794,14 @@ delete: 'Supprimer',
     noNotifications: 'Pas encore de notifications',
     refresh: 'Actualiser',
     viewDetails: 'Voir les Détails',
-    justNow: 'À l\'instant',
-    minutesAgo: 'il y a quelques minutes',
-    hoursAgo: 'il y a quelques heures',
-    daysAgo: 'il y a quelques jours',
-    yesterday: 'Hier',
-    today: 'Aujourd\'hui',
-    tomorrow: 'Demain',
-    recently: 'Récemment',
     
     // Notification Types
-    appointmentToday: 'Rendez-vous Aujourd\'hui',
-    appointmentTodayDesc: 'Vous avez un rendez-vous avec {patient} par {doctor} à {time}',
-    appointmentTomorrow: 'Rendez-vous Demain',
-    appointmentTomorrowDesc: 'Vous avez un rendez-vous avec {patient} par {doctor} à {time} demain',
-    appointmentReminder: 'Rappel de Rendez-vous',
-    appointmentReminderDesc: 'Vous avez un rendez-vous avec le Dr. Sarah Johnson demain à 10h00',
-    appointmentCompleted: 'Rendez-vous Terminé',
-    appointmentCompletedDesc: 'Le rendez-vous avec {patient} par {doctor} a été terminé',
-    appointmentCompletedStatic: 'Le rendez-vous avec le Dr. Emily Brown a été terminé',
-    appointmentCancelled: 'Rendez-vous Annulé',
-    appointmentCancelledDesc: 'Le rendez-vous avec {patient} a été annulé',
-    appointmentConfirmed: 'Rendez-vous Confirmé',
-    appointmentConfirmedDesc: 'Votre rendez-vous avec {doctor} a été confirmé pour {date}',
-    newAppointmentScheduled: 'Nouveau Rendez-vous Planifié',
-    newAppointmentScheduledDesc: 'Nouveau rendez-vous avec {patient} planifié pour {date}',
-    newPatientRegistered: 'Nouveau Patient Enregistré',
-    newPatientRegisteredDesc: '{name} a été enregistré comme nouveau patient',
-    newPatientRegisteredStatic: 'John Doe a été enregistré comme nouveau patient',
-    doctorAvailability: 'Disponibilité du Médecin',
-    doctorAvailabilityDesc: 'Le Dr. Michael Chen est maintenant disponible pour des rendez-vous',
-    newDoctorAdded: 'Nouveau Médecin Ajouté',
-    newDoctorAddedDesc: '{doctor} a été ajouté au personnel',
   },
   
   German: {
     // App
-    appName: 'MediCare',
-    tagline: 'Krankenhausverwaltung',
+    appName: 'QueueCare',
+    tagline: 'Intelligente Warteschlangenverwaltung',
     
     // Navigation
     dashboard: 'Dashboard',
@@ -946,7 +809,6 @@ delete: 'Supprimer',
     doctors: 'Ärzte',
     appointments: 'Termine',
     settings: 'Einstellungen',
-    notifications: 'Benachrichtigungen',
     logout: 'Abmelden',
     
     // Settings Page
@@ -959,8 +821,6 @@ delete: 'Supprimer',
     profileSettings: 'Profileinstellungen',
     userManagement: 'Benutzerverwaltung',
     notificationPreferences: 'Benachrichtigungseinstellungen',
-    securitySettings: 'Sicherheitseinstellungen',
-    appearanceSettings: 'Aussehenseinstellungen',
     themeSettings: 'Themen-Einstellungen',
     languageSettings: 'Spracheinstellungen',
     firstName: 'Vorname',
@@ -995,9 +855,7 @@ delete: 'Supprimer',
     twoFactorAuth: 'Zwei-Faktor-Authentifizierung',
     twoFactorDesc: 'Fügen Sie Ihrem Konto eine zusätzliche Sicherheitsebene hinzu',
     chooseTheme: 'Thema Wählen',
-    light: 'Hell',
     dark: 'Dunkel',
-    system: 'System',
     currentTheme: 'Aktuelles Thema',
     selectLanguage: 'Sprache Auswählen',
     currentLanguage: 'Aktuelle Sprache',
@@ -1010,7 +868,6 @@ delete: 'Supprimer',
     password: 'Passwort',
     saveChanges: 'Änderungen Speichern',
     saving: 'Speichern...',
-    languageSaved: 'Spracheinstellungen gespeichert!',
     selectLanguageHint: 'Wählen Sie Ihre bevorzugte Sprache für das gesamte System',
     
     // Messages
@@ -1101,7 +958,6 @@ delete: 'Löschen',
     createDoctor: 'Arzt Erstellen',
     
     // Appointment Management
-    appointmentManagement: 'Terminverwaltung',
     scheduleAppointment: 'Termin Planen',
     searchAppointments: 'Suche nach Terminen...',
     allStatus: 'Alle Status',
@@ -1134,44 +990,14 @@ delete: 'Löschen',
     noNotifications: 'Noch keine Benachrichtigungen',
     refresh: 'Aktualisieren',
     viewDetails: 'Details Anzeigen',
-    justNow: 'Gerade jetzt',
-    minutesAgo: 'Minuten her',
-    hoursAgo: 'Stunden her',
-    daysAgo: 'Tage her',
-    yesterday: 'Gestern',
-    today: 'Heute',
-    tomorrow: 'Morgen',
-    recently: 'Kürzlich',
     
     // Notification Types
-    appointmentToday: 'Termin Heute',
-    appointmentTodayDesc: 'Sie haben einen Termin mit {patient} bei {doctor} um {time}',
-    appointmentTomorrow: 'Termin Morgen',
-    appointmentTomorrowDesc: 'Sie haben einen Termin mit {patient} bei {doctor} um {time} morgen',
-    appointmentReminder: 'Terminerinnerung',
-    appointmentReminderDesc: 'Sie haben morgen um 10:00 Uhr einen Termin mit Dr. Sarah Johnson',
-    appointmentCompleted: 'Termin Abgeschlossen',
-    appointmentCompletedDesc: 'Der Termin mit {patient} bei {doctor} wurde abgeschlossen',
-    appointmentCompletedStatic: 'Der Termin mit Dr. Emily Brown wurde abgeschlossen',
-    appointmentCancelled: 'Termin Storniert',
-    appointmentCancelledDesc: 'Der Termin mit {patient} wurde storniert',
-    appointmentConfirmed: 'Termin Bestätigt',
-    appointmentConfirmedDesc: 'Ihr Termin mit {doctor} wurde für {date} bestätigt',
-    newAppointmentScheduled: 'Neuer Termin Geplant',
-    newAppointmentScheduledDesc: 'Neuer Termin mit {patient} geplant für {date}',
-    newPatientRegistered: 'Neuer Patient Registriert',
-    newPatientRegisteredDesc: '{name} wurde als neuer Patient registriert',
-    newPatientRegisteredStatic: 'John Doe wurde als neuer Patient registriert',
-    doctorAvailability: 'Arztverfügbarkeit',
-    doctorAvailabilityDesc: 'Dr. Michael Chen ist jetzt für Termine verfügbar',
-    newDoctorAdded: 'Neuer Arzt Hinzugefügt',
-    newDoctorAddedDesc: '{doctor} wurde zum Personal hinzugefügt',
   },
   
   Portuguese: {
     // App
-    appName: 'MediCare',
-    tagline: 'Gestão Hospitalar',
+    appName: 'QueueCare',
+    tagline: 'Gestão Inteligente de Filas Hospitalares',
     
     // Navigation
     dashboard: 'Painel',
@@ -1179,7 +1005,6 @@ delete: 'Löschen',
     doctors: 'Médicos',
     appointments: 'Consultas',
     settings: 'Configurações',
-    notifications: 'Notificações',
     logout: 'Sair',
     
     // Settings Page
@@ -1192,8 +1017,6 @@ delete: 'Löschen',
     profileSettings: 'Configurações de Perfil',
     userManagement: 'Gerenciamento de Usuários',
     notificationPreferences: 'Preferências de Notificação',
-    securitySettings: 'Configurações de Segurança',
-    appearanceSettings: 'Configurações de Aparência',
     themeSettings: 'Configurações de Tema',
     languageSettings: 'Configurações de Idioma',
     firstName: 'Nome',
@@ -1228,9 +1051,7 @@ delete: 'Löschen',
     twoFactorAuth: 'Autenticação de Dois Fatores',
     twoFactorDesc: 'Adicione uma camada extra de segurança à sua conta',
     chooseTheme: 'Escolher Tema',
-    light: 'Claro',
     dark: 'Escuro',
-    system: 'Sistema',
     currentTheme: 'Tema atual',
     selectLanguage: 'Selecionar Idioma',
     currentLanguage: 'Idioma atual',
@@ -1243,7 +1064,6 @@ delete: 'Löschen',
     password: 'Senha',
     saveChanges: 'Salvar Alterações',
     saving: 'Salvando...',
-    languageSaved: 'Configurações de idioma salvas!',
     selectLanguageHint: 'Escolha seu idioma preferido para todo o sistema',
     
     // Messages
@@ -1335,7 +1155,6 @@ delete: 'Excluir',
     createDoctor: 'Criar Médico',
     
     // Appointment Management
-    appointmentManagement: 'Gestão de Consultas',
     scheduleAppointment: 'Agendar Consulta',
     searchAppointments: 'Pesquisar consultas...',
     allStatus: 'Todos os Status',
@@ -1368,44 +1187,14 @@ delete: 'Excluir',
     noNotifications: 'Ainda não há notificações',
     refresh: 'Atualizar',
     viewDetails: 'Ver Detalhes',
-    justNow: 'Agora mesmo',
-    minutesAgo: 'minutos atrás',
-    hoursAgo: 'horas atrás',
-    daysAgo: 'dias atrás',
-    yesterday: 'Ontem',
-    today: 'Hoje',
-    tomorrow: 'Amanhã',
-    recently: 'Recentemente',
     
     // Notification Types
-    appointmentToday: 'Consulta Hoje',
-    appointmentTodayDesc: 'Você tem uma consulta com {patient} por {doctor} às {time}',
-    appointmentTomorrow: 'Consulta Amanhã',
-    appointmentTomorrowDesc: 'Você tem uma consulta com {patient} por {doctor} às {time} amanhã',
-    appointmentReminder: 'Lembrete de Consulta',
-    appointmentReminderDesc: 'Você tem uma consulta com a Dra. Sarah Johnson amanhã às 10:00',
-    appointmentCompleted: 'Consulta Concluída',
-    appointmentCompletedDesc: 'A consulta com {patient} por {doctor} foi concluída',
-    appointmentCompletedStatic: 'A consulta com a Dra. Emily Brown foi concluída',
-    appointmentCancelled: 'Consulta Cancelada',
-    appointmentCancelledDesc: 'A consulta com {patient} foi cancelada',
-    appointmentConfirmed: 'Consulta Confirmada',
-    appointmentConfirmedDesc: 'Sua consulta com {doctor} foi confirmada para {date}',
-    newAppointmentScheduled: 'Nova Consulta Agendada',
-    newAppointmentScheduledDesc: 'Nova consulta com {patient} agendada para {date}',
-    newPatientRegistered: 'Novo Paciente Registrado',
-    newPatientRegisteredDesc: '{name} foi registrado como novo paciente',
-    newPatientRegisteredStatic: 'John Doe foi registrado como novo paciente',
-    doctorAvailability: 'Disponibilidade de Médico',
-    doctorAvailabilityDesc: 'O Dr. Michael Chen já está disponível para consultas',
-    newDoctorAdded: 'Novo Médico Adicionado',
-    newDoctorAddedDesc: '{doctor} foi adicionado à equipe',
   },
   
   Italian: {
     // App
-    appName: 'MediCare',
-    tagline: 'Gestione Ospedaliera',
+    appName: 'QueueCare',
+    tagline: 'Gestione Intelligente delle Code Ospedaliere',
     
     // Navigation
     dashboard: 'Dashboard',
@@ -1413,7 +1202,6 @@ delete: 'Excluir',
     doctors: 'Medici',
     appointments: 'Appuntamenti',
     settings: 'Impostazioni',
-    notifications: 'Notifiche',
     logout: 'Esci',
     
     // Settings Page
@@ -1426,8 +1214,6 @@ delete: 'Excluir',
     profileSettings: 'Impostazioni Profilo',
     userManagement: 'Gestione Utenti',
     notificationPreferences: 'Preferenze Notifiche',
-    securitySettings: 'Impostazioni Sicurezza',
-    appearanceSettings: 'Impostazioni Aspetto',
     themeSettings: 'Impostazioni Tema',
     languageSettings: 'Impostazioni Lingua',
     firstName: 'Nome',
@@ -1462,9 +1248,7 @@ delete: 'Excluir',
     twoFactorAuth: 'Autenticazione a Due Fattori',
     twoFactorDesc: 'Aggiungi un livello extra di sicurezza al tuo account',
     chooseTheme: 'Scegli Tema',
-    light: 'Chiaro',
     dark: 'Scuro',
-    system: 'Sistema',
     currentTheme: 'Tema attuale',
     selectLanguage: 'Seleziona Lingua',
     currentLanguage: 'Lingua attuale',
@@ -1477,7 +1261,6 @@ delete: 'Excluir',
     password: 'Password',
     saveChanges: 'Salva Modifiche',
     saving: 'Salvataggio...',
-    languageSaved: 'Impostazioni lingua salvate!',
     selectLanguageHint: 'Scegli la tua lingua preferita per tutto il sistema',
     
     // Messages
@@ -1570,7 +1353,6 @@ delete: 'Elimina',
     createDoctor: 'Crea Medico',
     
     // Appointment Management
-    appointmentManagement: 'Gestione Appuntamenti',
     scheduleAppointment: 'Pianifica Appuntamento',
     searchAppointments: 'Cerca appuntamenti...',
     allStatus: 'Tutti gli Stati',
@@ -1603,46 +1385,78 @@ delete: 'Elimina',
     noNotifications: 'Ancora nessuna notifica',
     refresh: 'Aggiorna',
     viewDetails: 'Vedi Dettagli',
-    justNow: 'Proprio ora',
-    minutesAgo: 'minuti fa',
-    hoursAgo: 'ore fa',
-    daysAgo: 'giorni fa',
-    yesterday: 'Ieri',
-    today: 'Oggi',
-    tomorrow: 'Domani',
-    recently: 'Recentemente',
     
     // Notification Types
-    appointmentToday: 'Appuntamento Oggi',
-    appointmentTodayDesc: 'Hai un appuntamento con {patient} con {doctor} alle {time}',
-    appointmentTomorrow: 'Appuntamento Domani',
-    appointmentTomorrowDesc: 'Hai un appuntamento con {patient} con {doctor} alle {time} domani',
-    appointmentReminder: 'Promemoria Appuntamento',
-    appointmentReminderDesc: 'Hai un appuntamento con la Dott.ssa Sarah Johnson domani alle 10:00',
-    appointmentCompleted: 'Appuntamento Completato',
-    appointmentCompletedDesc: 'L\'appuntamento con {patient} con {doctor} è stato completato',
-    appointmentCompletedStatic: 'L\'appuntamento con la Dott.ssa Emily Brown è stato completato',
-    appointmentCancelled: 'Appuntamento Cancellato',
-    appointmentCancelledDesc: 'L\'appuntamento con {patient} è stato cancellato',
-    appointmentConfirmed: 'Appuntamento Confermato',
-    appointmentConfirmedDesc: 'Il tuo appuntamento con {doctor} è stato confermato per {date}',
-    newAppointmentScheduled: 'Nuovo Appuntamento Pianificato',
-    newAppointmentScheduledDesc: 'Nuovo appuntamento con {patient} pianificato per {date}',
-    newPatientRegistered: 'Nuovo Paziente Registrato',
-    newPatientRegisteredDesc: '{name} è stato registrato come nuovo paziente',
-    newPatientRegisteredStatic: 'John Doe è stato registrato come nuovo paziente',
-    doctorAvailability: 'Disponibilità Medico',
-    doctorAvailabilityDesc: 'Il Dr. Michael Chen è ora disponibile per appuntamenti',
-    newDoctorAdded: 'Nuovo Medico Aggiunto',
-    newDoctorAddedDesc: '{doctor} è stato aggiunto al personale',
   },
 };
 
+// Merge queue module translations into each language block
+Object.keys(queueTranslations).forEach((language) => {
+  if (translations[language]) {
+    Object.assign(translations[language], queueTranslations[language]);
+  }
+});
+
+// Merge public marketing / legal / newsletter translations
+Object.keys(publicTranslations).forEach((language) => {
+  if (translations[language]) {
+    Object.assign(translations[language], publicTranslations[language]);
+  }
+});
+
+// Merge landing page / sign-in / public kiosk / shared error translations
+Object.keys(appTranslations).forEach((language) => {
+  if (translations[language]) {
+    Object.assign(translations[language], appTranslations[language]);
+  }
+});
+
 export const getTranslation = (language, key) => {
   const langTranslations = translations[language] || translations.English;
-  return langTranslations[key] || key;
+  const value = langTranslations[key];
+
+  if (typeof value === 'string') return value;
+
+  // Missing in the active language: fall back to English, then to the key itself.
+  const fallbackValue = translations.English[key];
+  if (typeof fallbackValue === 'string') {
+    if (isDev) {
+      console.warn(`[i18n] Missing "${key}" in ${language}, using English fallback.`);
+    }
+    return fallbackValue;
+  }
+
+  if (isDev) {
+    console.warn(`[i18n] Missing key "${key}" (requested for ${language}).`);
+  }
+  return key;
 };
 
 export const getAvailableLanguages = () => {
   return Object.keys(translations);
 };
+
+export const isSupportedLanguage = (language) => getAvailableLanguages().includes(language);
+
+export const getLanguageMetadata = (language) => {
+  const fallback = { nativeName: language, code: String(language).slice(0, 2).toUpperCase(), dir: 'ltr', flag: '' };
+  return languageMetadata[language] || fallback;
+};
+
+// Resolve a browser locale ("pt-BR", "sw-KE", "en") to a supported language.
+export const resolveBrowserLanguage = () => {
+  const candidates = [];
+  if (typeof navigator !== 'undefined') {
+    if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages);
+    if (navigator.language) candidates.push(navigator.language);
+  }
+
+  for (const locale of candidates) {
+    const base = String(locale).toLowerCase().split('-')[0];
+    const mapped = browserLanguageMap[base];
+    if (mapped && isSupportedLanguage(mapped)) return mapped;
+  }
+  return null;
+};
+
+export { browserLanguageMap, languageMetadata };

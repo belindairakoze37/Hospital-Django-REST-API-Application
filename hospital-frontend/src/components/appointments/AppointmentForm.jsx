@@ -75,7 +75,7 @@ const AppointmentForm = () => {
       navigate('/appointments');
     } catch (error) {
       console.error('Error saving appointment:', error);
-      setError(error.response?.data?.message || 'Failed to save appointment');
+      setError(error.response?.data?.message || t('errorSaveAppointment'));
     } finally {
       setLoading(false);
     }
@@ -90,10 +90,10 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto">
       <div className="glass-card rounded-3xl p-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold gradient-text">
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">
             {id ? t('editAppointment') : t('scheduleAppointment')}
           </h1>
           <button

@@ -29,7 +29,7 @@ import api from '../../api/axios';
 import { useLanguage } from '../../context/LanguageContext';
 
 const Settings = () => {
-  const { t, language, changeLanguage, saveLanguage, isLanguageChanging } = useLanguage();
+  const { t, language, saveLanguage, languages, getLanguageMetadata } = useLanguage();
   const [activeTab, setActiveTab] = useState('profile');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -163,12 +163,12 @@ const Settings = () => {
         localStorage.setItem('medicare_settings', JSON.stringify(newSettings));
         setSettings(newSettings);
         
-        setSuccessMessage(t('languageSaved') || 'Language settings saved successfully!');
+        setSuccessMessage(t('languageSettingsSaved'));
         setTimeout(() => setSuccessMessage(''), 3000);
       }
     } catch (error) {
       console.error('Error saving language:', error);
-      setErrorMessage('Failed to save language settings');
+      setErrorMessage(t('errorSaveLanguage'));
     } finally {
       setIsSavingLanguage(false);
     }
@@ -282,10 +282,9 @@ const Settings = () => {
         last_name: response.data.last_name || '',
         email: response.data.email || '',
         username: response.data.username || ''
-      });
-    } catch (error) {
+      });    } catch (error) {
       console.error('Error updating profile:', error);
-      setErrorMessage(error.response?.data?.message || 'Failed to update profile');
+      setErrorMessage(error.response?.data?.message || t('errorUpdateProfile'));
     } finally {
       setProfileLoading(false);
     }
@@ -323,7 +322,7 @@ const Settings = () => {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error changing password:', error);
-      setErrorMessage(error.response?.data?.error || 'Failed to change password');
+      setErrorMessage(error.response?.data?.error || t('errorChangePassword'));
     } finally {
       setPasswordLoading(false);
     }
@@ -376,7 +375,7 @@ const Settings = () => {
         setTimeout(() => setSuccessMessage(''), 3000);
       } catch (error) {
         console.error('Error deleting user:', error);
-        setErrorMessage('Failed to delete user');
+        setErrorMessage(t('errorDeleteUser'));
         setTimeout(() => setErrorMessage(''), 3000);
       }
     }
@@ -429,16 +428,6 @@ const Settings = () => {
     { id: 'appearance', icon: Palette, labelKey: 'appearance' }
   ];
 
-  const languages = [
-    { code: 'English', flag: '🇬🇧' },
-    { code: 'Spanish', flag: '🇪🇸' },
-    { code: 'French', flag: '🇫🇷' },
-    { code: 'German', flag: '🇩🇪' },
-    { code: 'Portuguese', flag: '🇵🇹' },
-    { code: 'Italian', flag: '🇮🇹' },
-    { code: 'Kiswahili', flag: '🇹🇿' }
-  ];
-
   return (
     <div className="max-w-6xl mx-auto">
       {/* Success/Error Messages */}
@@ -460,7 +449,7 @@ const Settings = () => {
       )}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text">{t('settingsTitle')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('settingsTitle')}</h1>
         <p className="text-gray-500 mt-1">{t('settingsSubtitle')}</p>
       </div>
 
@@ -484,7 +473,7 @@ const Settings = () => {
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <User className="w-5 h-5 text-primary-500" />
             <h2 className="text-lg font-semibold text-gray-800">{t('profileSettings')}</h2>
@@ -554,7 +543,7 @@ const Settings = () => {
 
       {/* Users Tab */}
       {activeTab === 'users' && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <Users className="w-5 h-5 text-primary-500" />
@@ -662,7 +651,7 @@ const Settings = () => {
 
       {/* Notification Settings Tab */}
       {activeTab === 'notifications' && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <Bell className="w-5 h-5 text-primary-500" />
             <h2 className="text-lg font-semibold text-gray-800">{t('notificationPreferences')}</h2>
@@ -707,7 +696,7 @@ const Settings = () => {
       {/* Security Tab */}
       {activeTab === 'security' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <Key className="w-5 h-5 text-primary-500" />
               <h2 className="text-lg font-semibold text-gray-800">{t('changePassword')}</h2>
@@ -793,7 +782,7 @@ const Settings = () => {
             </form>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-800">{t('twoFactorAuth')}</p>
@@ -818,14 +807,14 @@ const Settings = () => {
       {activeTab === 'appearance' && (
         <div className="space-y-6">
           {/* Theme Settings */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <Palette className="w-5 h-5 text-primary-500" />
               <h2 className="text-lg font-semibold text-gray-800">{t('themeSettings')}</h2>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">{t('chooseTheme')}</label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 {[
                   { id: 'Light', icon: Sun, color: 'from-yellow-400 to-yellow-500', bgColor: 'bg-white', textColor: 'text-gray-800' },
                   { id: 'Dark', icon: Moon, color: 'from-gray-700 to-gray-900', bgColor: 'bg-gray-900', textColor: 'text-white' },
@@ -834,20 +823,20 @@ const Settings = () => {
                   <button
                     key={theme.id}
                     onClick={() => handleThemeChange(theme.id)}
-                    className={`flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all duration-300 relative ${
+                    className={`flex min-w-0 flex-row sm:flex-col items-center gap-4 p-4 sm:p-6 rounded-xl border-2 transition-all duration-300 relative ${
                       settings.theme === theme.id
-                        ? 'border-primary-500 bg-primary-50 shadow-lg scale-105'
+                        ? 'border-primary-500 bg-primary-50 shadow-lg sm:scale-105'
                         : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                     }`}
                   >
-                    <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${theme.color} flex items-center justify-center`}>
-                      <theme.icon className={`w-8 h-8 text-white ${theme.id === 'Dark' ? 'text-gray-200' : ''}`} />
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-full bg-gradient-to-r ${theme.color} flex items-center justify-center`}>
+                      <theme.icon className={`w-6 h-6 sm:w-8 sm:h-8 text-white ${theme.id === 'Dark' ? 'text-gray-200' : ''}`} />
                     </div>
-                    <div className="text-center">
+                    <div className="w-full min-w-0 flex-1 text-left sm:text-center">
                       <p className={`font-semibold ${settings.theme === theme.id ? 'text-primary-600' : 'text-gray-700'}`}>
                         {t(theme.id.toLowerCase())}
                       </p>
-                      <div className={`mt-2 w-full h-8 rounded-md ${theme.bgColor} border border-gray-200 flex items-center justify-center ${theme.textColor} text-xs`}>
+                      <div className={`mt-2 sm:mt-3 w-full min-w-0 rounded-lg ${theme.bgColor} border border-gray-200 px-4 py-3 flex items-center justify-center ${theme.textColor} text-xs font-medium tracking-wide`}>
                         {t('preview')}
                       </div>
                     </div>
@@ -868,28 +857,29 @@ const Settings = () => {
           </div>
 
           {/* Language Settings - With Save Button */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <Globe className="w-5 h-5 text-primary-500" />
               <h2 className="text-lg font-semibold text-gray-800">{t('languageSettings')}</h2>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">{t('selectLanguage')}</label>
-              <p className="text-sm text-gray-500 mb-4">{t('selectLanguageHint') || 'Choose your preferred language for the entire system'}</p>
+              <p className="text-sm text-gray-500 mb-4">{t('selectLanguageHint')}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {languages.map((lang) => (
                   <button
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
+                    key={lang.name}
+                    onClick={() => handleLanguageChange(lang.name)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all duration-300 ${
-                      selectedLanguage === lang.code
+                      selectedLanguage === lang.name
                         ? 'border-primary-500 bg-primary-50 text-primary-600 shadow-md'
                         : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:shadow-md'
                     }`}
                   >
-                    <span className="text-2xl">{lang.flag}</span>
-                    <span className="font-medium">{lang.code}</span>
-                    {selectedLanguage === lang.code && (
+                    <span className="text-2xl" aria-hidden="true">{lang.flag}</span>
+                    <span className="font-medium">{lang.nativeName}</span>
+                    <span className="text-xs text-gray-400">{lang.code}</span>
+                    {selectedLanguage === lang.name && (
                       <Check className="w-4 h-4 text-primary-500 ml-auto" />
                     )}
                   </button>
@@ -899,7 +889,7 @@ const Settings = () => {
               {/* Current Language Display */}
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
-                  {t('currentLanguage')}: <span className="font-semibold text-primary-600">{selectedLanguage}</span>
+                  {t('currentLanguage')}: <span className="font-semibold text-primary-600">{getLanguageMetadata(selectedLanguage).nativeName}</span>
                 </p>
               </div>
 
@@ -917,18 +907,18 @@ const Settings = () => {
                   {isSavingLanguage ? (
                     <>
                       <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                      {t('saving') || 'Saving...'}
+                      {t('saving')}
                     </>
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      {t('saveChanges') || 'Save Changes'}
+                      {t('saveChanges')}
                     </>
                   )}
                 </button>
                 {selectedLanguage === language && (
                   <p className="text-xs text-gray-500 mt-2">
-                    {language === settings.language ? 'Current language is already set' : 'Select a different language to save'}
+                    {t('languageAlreadySet')}
                   </p>
                 )}
               </div>
@@ -940,7 +930,7 @@ const Settings = () => {
       {/* User Modal */}
       {showUserModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl p-5 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold gradient-text">
                 {editingUser ? t('editUserTitle') : t('addNewUser')}

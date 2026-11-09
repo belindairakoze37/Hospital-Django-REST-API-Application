@@ -1,11 +1,11 @@
 // src/components/notifications/Notifications.jsx
 import React, { useState, useEffect } from 'react';
-import { Bell, Calendar, Users, Stethoscope, CheckCircle, Clock, UserPlus, FileText, AlertCircle, X, RefreshCw } from 'lucide-react';
+import { Bell, Calendar, Users, Stethoscope, CheckCircle, Clock, UserPlus, FileText, AlertCircle, X, RefreshCw, ListOrdered, Megaphone, Timer } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import api from '../../api/axios';
 
 const Notifications = () => {
-  const { t } = useLanguage();
+  const { t, formatRelativeTime } = useLanguage();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -87,6 +87,11 @@ const Notifications = () => {
       'appointment_reminder': Clock,
       'patient_registered': UserPlus,
       'doctor_assigned': Stethoscope,
+      'queue_turn_approaching': Timer,
+      'queue_called': Megaphone,
+      'queue_position_update': ListOrdered,
+      'queue_delay': AlertCircle,
+      'queue_completed': CheckCircle,
     };
     return icons[type] || Bell;
   };
@@ -99,29 +104,13 @@ const Notifications = () => {
       'appointment_reminder': 'from-yellow-500 to-yellow-600',
       'patient_registered': 'from-green-500 to-green-600',
       'doctor_assigned': 'from-pink-500 to-pink-600',
+      'queue_turn_approaching': 'from-amber-500 to-amber-600',
+      'queue_called': 'from-emerald-500 to-emerald-600',
+      'queue_position_update': 'from-sky-500 to-sky-600',
+      'queue_delay': 'from-orange-500 to-orange-600',
+      'queue_completed': 'from-teal-500 to-teal-600',
     };
     return colors[type] || 'from-gray-500 to-gray-600';
-  };
-
-  const formatTimeAgo = (dateString) => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffInSeconds = Math.floor((now - date) / 1000);
-    
-    if (diffInSeconds < 60) {
-      return t('justNow') || 'Just now';
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes} ${t('minutesAgo') || 'minutes ago'}`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours} ${t('hoursAgo') || 'hours ago'}`;
-    } else if (diffInSeconds < 172800) {
-      return t('yesterday') || 'Yesterday';
-    } else {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days} ${t('daysAgo') || 'days ago'}`;
-    }
   };
 
   if (loading) {
@@ -136,7 +125,7 @@ const Notifications = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">{t('notifications')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('notifications')}</h1>
           <p className="text-gray-500 mt-1">
             {unreadCount > 0 
               ? t('unreadNotifications', { count: unreadCount })
@@ -217,7 +206,7 @@ const Notifications = () => {
                     </div>
                     <div className="flex items-center gap-2 mt-3 text-xs text-gray-400">
                       <Clock className="w-3 h-3" />
-                      <span>{formatTimeAgo(notification.created_at)}</span>
+                      <span>{formatRelativeTime(notification.created_at)}</span>
                       {!notification.read && (
                         <span className="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
                       )}

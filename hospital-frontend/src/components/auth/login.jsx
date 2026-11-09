@@ -1,21 +1,28 @@
 // src/components/auth/Login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Heart, Stethoscope, Mail, Lock } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
+import { Heart, Stethoscope, User, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const errorMessage = error
+    ? `${t(error.key)}${error.detail ? ` ${error.detail}` : ''}`
+    : '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError(null);
     
     try {
       const result = await login(username, password);
@@ -23,10 +30,10 @@ const Login = () => {
       if (result.success) {
         navigate('/dashboard');
       } else {
-        setError(result.error || 'Login failed. Please check your credentials.');
+        setError({ key: result.errorKey || 'authLoginFailed', detail: result.detail });
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      setError({ key: 'authUnexpectedError', detail: null });
       console.error('Login error:', err);
     } finally {
       setLoading(false);
@@ -34,77 +41,127 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 p-4">
-      <div className="glass-card rounded-3xl p-8 w-full max-w-md animate-fade-in">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 mb-4">
-            <Heart className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold gradient-text">MediCare</h1>
-          <p className="text-gray-500 mt-2">Welcome back! Please login to your account</p>
-        </div>
+    <div className="ql-page">
+      <div aria-hidden="true" className="ql-page-photo" />
+      <div aria-hidden="true" className="ql-page-overlay" />
 
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg animate-slide-in">
-            <p>{error}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="input-field pl-12"
-                placeholder="Enter your username"
-                required
-              />
-            </div>
+      <div className="ql-shell">
+        <div className="ql-card">
+          <div className="text-center mb-6">
+            <span className="ql-logo">
+              <Heart className="w-8 h-8 text-white" aria-hidden="true" />
+            </span>
+            <h1 className="ql-title">{t('appName')}</h1>
+            <p className="ql-tagline">{t('tagline')}</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field pl-12"
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                Logging in...
-              </span>
-            ) : (
-              <>
-                <Stethoscope className="w-5 h-5" />
-                Sign In
-              </>
+          <div role="alert" aria-live="polite">
+            {errorMessage && (
+              <div className="ql-error">
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                <span>{errorMessage}</span>
+              </div>
             )}
-          </button>
-        </form>
+          </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Demo credentials: <span className="font-mono bg-gray-100 px-2 py-1 rounded">admin / admin123</span>
-          </p>
+          <form onSubmit={handleSubmit}>
+            <div className="ql-field">
+              <label className="ql-label" htmlFor="username">
+                {t('username')}
+              </label>
+              <div className="ql-control">
+                <User className="ql-control-icon" aria-hidden="true" />
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="ql-input"
+                  placeholder={t('authUsernamePlaceholder')}
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                  aria-invalid={error ? 'true' : 'false'}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="ql-field">
+              <label className="ql-label" htmlFor="password">
+                {t('password')}
+              </label>
+              <div className="ql-control">
+                <Lock className="ql-control-icon" aria-hidden="true" />
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="ql-input ql-input--password"
+                  placeholder={t('authPasswordPlaceholder')}
+                  autoComplete="current-password"
+                  aria-invalid={error ? 'true' : 'false'}
+                  required
+                />
+                <button
+                  type="button"
+                  className="ql-toggle"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? t('authHidePassword') : t('authShowPassword')}
+                  aria-pressed={showPassword}
+                  aria-controls="password"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" aria-hidden="true" />
+                  ) : (
+                    <Eye className="w-5 h-5" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              <div className="ql-forgot-row">
+                <a
+                  className="ql-link"
+                  href="mailto:info@queuecare.com?subject=Password%20reset"
+                  aria-label={t('authForgotPasswordAria')}
+                >
+                  {t('authForgotPassword')}
+                </a>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} className="ql-submit" aria-busy={loading}>
+              {loading ? (
+                <>
+                  <span className="ql-spinner" aria-hidden="true" />
+                  <span>{t('authSigningIn')}</span>
+                </>
+              ) : (
+                <>
+                  <Stethoscope className="w-5 h-5" aria-hidden="true" />
+                  <span>{t('navSignIn')}</span>
+                </>
+              )}
+            </button>
+          </form>
         </div>
+
+        <footer className="ql-footer">
+          <p>{t('authFooterCopyright', { year: new Date().getFullYear() })}</p>
+          <nav className="ql-footer-links" aria-label={t('authLegalLinksAria')}>
+            <Link to="/privacy" className="ql-footer-link">
+              {t('privacy')}
+            </Link>
+            <Link to="/terms" className="ql-footer-link">
+              {t('terms')}
+            </Link>
+            <Link to="/support" className="ql-footer-link">
+              {t('support')}
+            </Link>
+          </nav>
+        </footer>
       </div>
     </div>
   );

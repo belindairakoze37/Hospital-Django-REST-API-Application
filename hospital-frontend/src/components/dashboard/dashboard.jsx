@@ -1,7 +1,7 @@
 // src/components/dashboard/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Stethoscope, CalendarCheck, Clock, TrendingUp, Activity } from 'lucide-react';
+import { Users, Stethoscope, CalendarCheck, Clock, TrendingUp, Activity, ListOrdered, ArrowRight } from 'lucide-react';
 import api from '../../api/axios';
 import StatsCard from './StatsCard';
 import AppointmentList from '../appointments/AppointmentList';
@@ -17,10 +17,23 @@ const Dashboard = () => {
     todayAppointments: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [queueBoard, setQueueBoard] = useState([]);
 
   useEffect(() => {
     fetchStats();
+    fetchQueueBoard();
+    const queueInterval = setInterval(fetchQueueBoard, 30000);
+    return () => clearInterval(queueInterval);
   }, []);
+
+  const fetchQueueBoard = async () => {
+    try {
+      const response = await api.get('queue/status_board/');
+      setQueueBoard(response.data || []);
+    } catch (error) {
+      console.error('Error fetching queue summary:', error);
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -83,6 +96,11 @@ const Dashboard = () => {
     },
   ];
 
+  const totalQueueWaiting = queueBoard.reduce(
+    (sum, entry) => sum + (entry.waiting_count || 0),
+    0
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -92,10 +110,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text">{t('dashboardTitle')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('dashboardTitle')}</h1>
         <p className="text-gray-500 mt-2">{t('dashboardWelcome')} {t('dashboardSubtitle')}</p>
       </div>
 
@@ -108,7 +126,7 @@ const Dashboard = () => {
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 glass-card rounded-2xl p-6">
+        <div className="lg:col-span-2 glass-card rounded-2xl p-5 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-800">{t('recentAppointments')}</h2>
             <span 
@@ -121,31 +139,72 @@ const Dashboard = () => {
           <AppointmentList limit={5} />
         </div>
 
-        <div className="glass-card rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">{t('quickActions')}</h2>
+        <div className="space-y-6">
+          <div className="glass-card rounded-2xl p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">{t('quickActions')}</h2>
+            </div>
+            <div className="space-y-3">
+              <button 
+                onClick={() => navigate('/appointments/new')}
+                className="w-full btn-primary text-sm flex items-center justify-center gap-2"
+              >
+                <CalendarCheck className="w-4 h-4" />
+                {t('newAppointment')}
+              </button>
+              <button 
+                onClick={() => navigate('/patients')}
+                className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                {t('registerPatient')}
+              </button>
+              <button 
+                onClick={() => navigate('/doctors')}
+                className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
+              >
+                <Stethoscope className="w-4 h-4" />
+                {t('addDoctor')}
+              </button>
+            </div>
           </div>
-          <div className="space-y-3">
-            <button 
-              onClick={() => navigate('/appointments/new')}
-              className="w-full btn-primary text-sm flex items-center justify-center gap-2"
+
+          {/* Queue Summary */}
+          <div className="glass-card rounded-2xl p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <ListOrdered className="w-5 h-5 text-primary-500" />
+                {t('queueSummary')}
+              </h2>
+              <span className="text-sm font-medium text-gray-500">
+                {totalQueueWaiting} {t('waiting')}
+              </span>
+            </div>
+
+            {queueBoard.length === 0 ? (
+              <p className="text-sm text-gray-500">{t('noDepartments')}</p>
+            ) : (
+              <div className="space-y-2">
+                {queueBoard.map((entry) => (
+                  <div
+                    key={entry.department_id}
+                    className="flex items-center justify-between gap-3 text-sm"
+                  >
+                    <span className="text-gray-600 truncate">{entry.department}</span>
+                    <span className="font-semibold text-gray-800 shrink-0">
+                      {entry.now_serving || '—'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => navigate('/queue')}
+              className="w-full mt-4 btn-secondary text-sm flex items-center justify-center gap-2"
             >
-              <CalendarCheck className="w-4 h-4" />
-              {t('newAppointment')}
-            </button>
-            <button 
-              onClick={() => navigate('/patients')}
-              className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              {t('registerPatient')}
-            </button>
-            <button 
-              onClick={() => navigate('/doctors')}
-              className="w-full btn-secondary text-sm flex items-center justify-center gap-2"
-            >
-              <Stethoscope className="w-4 h-4" />
-              {t('addDoctor')}
+              {t('viewQueue')}
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

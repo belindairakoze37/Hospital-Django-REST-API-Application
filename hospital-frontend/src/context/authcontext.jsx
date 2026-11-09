@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       // Try to get current user info to verify token
       await api.get('users/me/');
       setUser({ isAuthenticated: true });
-    } catch (error) {
+    } catch {
       // Token is invalid
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
@@ -56,19 +56,24 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
-      let errorMessage = 'Login failed. Please check your credentials.';
-      
+      // Return a stable code so consumers can translate it; `detail` is a
+      // server-supplied message that is only shown as extra context.
+      let errorKey = 'authLoginFailed';
+      let detail = null;
+
       if (error.response?.status === 401) {
-        errorMessage = 'Invalid username or password. Please try again.';
+        errorKey = 'authInvalidCredentials';
       } else if (error.response?.status === 400) {
-        errorMessage = error.response?.data?.detail || 'Invalid request. Please try again.';
+        errorKey = 'authInvalidRequest';
+        detail = error.response?.data?.detail || null;
       } else if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Cannot connect to server. Please make sure the backend is running.';
+        errorKey = 'authServerUnreachable';
       }
-      
-      return { 
-        success: false, 
-        error: errorMessage 
+
+      return {
+        success: false,
+        errorKey,
+        detail,
       };
     }
   };

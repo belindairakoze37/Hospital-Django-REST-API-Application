@@ -8,19 +8,25 @@ const DoctorCard = ({ doctor, onUpdate, onEdit, onDelete }) => {
   const { t } = useLanguage();
 
   const handleDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete Dr. ${doctor.first_name} ${doctor.last_name}?`)) {
+    if (
+      window.confirm(
+        t('errorDeleteDoctorNamedConfirm', {
+          name: `${t('dr')} ${doctor.first_name} ${doctor.last_name}`,
+        })
+      )
+    ) {
       try {
         await api.delete(`doctors/${doctor.id}/`);
         onUpdate();
       } catch (error) {
         console.error('Error deleting doctor:', error);
-        alert('Failed to delete doctor. Please try again.');
+        alert(t('errorDeleteDoctor'));
       }
     }
   };
 
   return (
-    <div className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
+    <div className="glass-card rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
@@ -28,11 +34,11 @@ const DoctorCard = ({ doctor, onUpdate, onEdit, onDelete }) => {
           </div>
           <div>
             <h3 className="font-semibold text-gray-800">
-              Dr. {doctor.first_name} {doctor.last_name}
+              {t('dr')} {doctor.first_name} {doctor.last_name}
             </h3>
             <span className="text-xs text-primary-600 font-medium flex items-center gap-1">
               <Stethoscope className="w-3 h-3" />
-              {doctor.specialization || 'General'}
+              {doctor.specialization || t('general')}
             </span>
           </div>
         </div>
@@ -57,11 +63,11 @@ const DoctorCard = ({ doctor, onUpdate, onEdit, onDelete }) => {
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2 text-gray-600">
           <Mail className="w-4 h-4 text-purple-500 flex-shrink-0" />
-          <span className="truncate">{doctor.email || 'No email'}</span>
+          <span className="truncate">{doctor.email || t('noEmail')}</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600">
           <Building className="w-4 h-4 text-blue-500 flex-shrink-0" />
-          <span>{doctor.department_name || 'Department ' + (doctor.department || '')}</span>
+          <span>{doctor.department_name || `${t('department')} ${doctor.department || ''}`}</span>
         </div>
         {doctor.phone && (
           <div className="flex items-center gap-2 text-gray-600">
@@ -71,7 +77,8 @@ const DoctorCard = ({ doctor, onUpdate, onEdit, onDelete }) => {
         )}
         <div className="flex items-center gap-2 text-gray-600">
           <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          <span className="text-xs text-gray-500">Member since 2024</span>
+          {/* TODO(native review): the join year is static demo copy. */}
+          <span className="text-xs text-gray-500">{t('memberSince', { year: 2024 })}</span>
         </div>
       </div>
     </div>

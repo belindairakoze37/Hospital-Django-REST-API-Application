@@ -40,7 +40,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
     try {
       // Validate email domain
       if (!formData.email.endsWith('@hospital.com')) {
-        setError('Doctor email must be a hospital.com address');
+        setError(t('errorDoctorEmailDomain'));
         setLoading(false);
         return;
       }
@@ -86,7 +86,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="bg-white rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-3xl p-5 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
@@ -150,7 +150,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               value={formData.specialization}
               onChange={handleChange}
               className="input-field"
-              placeholder="e.g., Cardiologist, Pediatrician"
+              placeholder={t('specializationPlaceholder')}
               required
             />
           </div>
@@ -185,10 +185,10 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               value={formData.email}
               onChange={handleChange}
               className="input-field"
-              placeholder="doctor@hospital.com"
+              placeholder={t('doctorEmailPlaceholder')}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Must end with @hospital.com</p>
+            <p className="text-xs text-gray-500 mt-1">{t('doctorEmailHint')}</p>
           </div>
 
           <div>
@@ -201,7 +201,7 @@ const DoctorForm = ({ doctor, onClose, onSuccess }) => {
               value={formData.phone}
               onChange={handleChange}
               className="input-field"
-              placeholder="e.g., +256XXXXXXXXX"
+              placeholder={t('doctorPhonePlaceholder')}
             />
           </div>
 

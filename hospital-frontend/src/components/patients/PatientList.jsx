@@ -6,7 +6,7 @@ import PatientForm from './PatientForm';
 import { useLanguage } from '../../context/LanguageContext';
 
 const PatientList = () => {
-  const { t } = useLanguage();
+  const { t, formatDate } = useLanguage();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,13 +30,13 @@ const PatientList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this patient?')) {
+    if (window.confirm(t('errorDeletePatientConfirm'))) {
       try {
         await api.delete(`patients/${id}/`);
         setPatients(patients.filter(p => p.id !== id));
       } catch (error) {
         console.error('Error deleting patient:', error);
-        alert('Failed to delete patient. Please try again.');
+        alert(t('errorDeletePatient'));
       }
     }
   };
@@ -46,14 +46,10 @@ const PatientList = () => {
     patient.phone.includes(searchTerm)
   );
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const localizeDate = (dateString) =>
+    dateString
+      ? formatDate(dateString, { year: 'numeric', month: 'short', day: 'numeric' })
+      : t('notAvailable');
 
   if (loading) {
     return (
@@ -64,11 +60,11 @@ const PatientList = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">{t('patientManagement')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('patientManagement')}</h1>
           <p className="text-gray-500 mt-2">{t('managePatients')}</p>
         </div>
         <button
@@ -99,7 +95,7 @@ const PatientList = () => {
       {filteredPatients.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPatients.map((patient) => (
-            <div key={patient.id} className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
+            <div key={patient.id} className="glass-card rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-lg">
@@ -110,7 +106,7 @@ const PatientList = () => {
                       {patient.first_name} {patient.last_name}
                     </h3>
                     <span className="text-xs text-gray-500 capitalize">
-                      {patient.gender === 'm' ? 'Male' : patient.gender === 'f' ? 'Female' : 'Other'}
+                      {patient.gender === 'm' ? t('male') : patient.gender === 'f' ? t('female') : t('otherGender')}
                     </span>
                   </div>
                 </div>
@@ -138,7 +134,7 @@ const PatientList = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
                   <Phone className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                  <span className="truncate">{patient.phone || 'N/A'}</span>
+                  <span className="truncate">{patient.phone || t('notAvailable')}</span>
                 </div>
                 {patient.emergency_contact && (
                   <div className="flex items-center gap-2 text-gray-600">
@@ -148,12 +144,12 @@ const PatientList = () => {
                 )}
                 <div className="flex items-center gap-2 text-gray-600">
                   <Calendar className="w-4 h-4 text-accent-500 flex-shrink-0" />
-                  <span>DOB: {formatDate(patient.date_of_birth)}</span>
+                  <span>{t('dateOfBirth')}: {localizeDate(patient.date_of_birth)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <span className="text-xs text-gray-500">
-                    {t('registered')}: {formatDate(patient.created_at)}
+                    {t('registered')}: {localizeDate(patient.created_at)}
                   </span>
                 </div>
               </div>

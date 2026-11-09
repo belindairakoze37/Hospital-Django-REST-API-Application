@@ -1,8 +1,10 @@
 // src/components/dashboard/StatsCard.jsx
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const StatsCard = ({ title, value, icon: Icon, color, bg }) => {
+  const { t } = useLanguage();
   return (
     <div className="stat-card">
       <div className="flex items-center justify-between">
@@ -16,7 +18,8 @@ const StatsCard = ({ title, value, icon: Icon, color, bg }) => {
       </div>
       <div className="mt-4 flex items-center gap-1 text-xs text-green-500">
         <TrendingUp className="w-3 h-3" />
-        <span>12% increase from last month</span>
+        {/* TODO(native review): the 12% figure is static demo copy, not real data. */}
+        <span>{t('statIncreaseFromLastMonth', { percent: 12 })}</span>
       </div>
     </div>
   );

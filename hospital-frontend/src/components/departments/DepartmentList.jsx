@@ -30,7 +30,7 @@ const DepartmentList = () => {
       setDepartments(data);
     } catch (error) {
       console.error('Error fetching departments:', error);
-      setError('Failed to fetch departments');
+      setError(t('errorFetchDepartments'));
     } finally {
       setLoading(false);
     }
@@ -50,10 +50,10 @@ const DepartmentList = () => {
 
       if (editingDepartment) {
         await api.put(`departments/${editingDepartment.id}/`, submitData);
-        setSuccessMessage(t('departmentUpdated') || 'Department updated successfully!');
+        setSuccessMessage(t('departmentUpdated'));
       } else {
         await api.post('departments/', submitData);
-        setSuccessMessage(t('departmentCreated') || 'Department created successfully!');
+        setSuccessMessage(t('departmentCreated'));
       }
       
       await fetchDepartments();
@@ -61,22 +61,22 @@ const DepartmentList = () => {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error saving department:', error);
-      setError(error.response?.data?.message || 'Failed to save department');
+      setError(error.response?.data?.message || t('errorSaveDepartment'));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm(t('confirmDelete') || 'Are you sure you want to delete this department?')) {
+    if (window.confirm(t('confirmDelete'))) {
       try {
         await api.delete(`departments/${id}/`);
-        setSuccessMessage(t('departmentDeleted') || 'Department deleted successfully!');
+        setSuccessMessage(t('departmentDeleted'));
         await fetchDepartments();
         setTimeout(() => setSuccessMessage(''), 3000);
       } catch (error) {
         console.error('Error deleting department:', error);
-        setError('Failed to delete department. It may have associated doctors.');
+        setError(t('errorDeleteDepartment'));
         setTimeout(() => setError(''), 3000);
       }
     }
@@ -124,12 +124,12 @@ const DepartmentList = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">{t('departmentManagement') || 'Department Management'}</h1>
-          <p className="text-gray-500 mt-2">{t('manageDepartments') || 'Manage hospital departments'}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('departmentManagement')}</h1>
+          <p className="text-gray-500 mt-2">{t('manageDepartments')}</p>
         </div>
         <button
           onClick={() => {
@@ -139,7 +139,7 @@ const DepartmentList = () => {
           className="btn-primary flex items-center gap-2 mt-4 md:mt-0"
         >
           <Plus className="w-5 h-5" />
-          {t('addDepartment') || 'Add Department'}
+          {t('addDepartment')}
         </button>
       </div>
 
@@ -160,7 +160,7 @@ const DepartmentList = () => {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <input
           type="text"
-          placeholder={t('searchDepartments') || 'Search departments by name or floor...'}
+          placeholder={t('searchDepartments')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input-field pl-12"
@@ -172,7 +172,7 @@ const DepartmentList = () => {
         {filteredDepartments.map((department) => (
           <div 
             key={department.id} 
-            className="glass-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            className="glass-card rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -182,7 +182,7 @@ const DepartmentList = () => {
                 <div>
                   <h3 className="font-semibold text-gray-800">{department.dept_name}</h3>
                   <span className="text-sm text-gray-500">
-                    {t('floor') || 'Floor'}: {department.floor_number}
+                    {t('floor')}: {department.floor_number}
                   </span>
                 </div>
               </div>
@@ -190,14 +190,14 @@ const DepartmentList = () => {
                 <button
                   onClick={() => handleEdit(department)}
                   className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
-                  title={t('edit') || 'Edit'}
+                  title={t('edit')}
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDelete(department.id)}
                   className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
-                  title={t('delete') || 'Delete'}
+                  title={t('delete')}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -216,8 +216,8 @@ const DepartmentList = () => {
       {filteredDepartments.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <Building className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <p className="text-lg">{t('noDepartments') || 'No departments found'}</p>
-          <p className="text-sm">{t('addFirstDepartment') || 'Add your first department'}</p>
+          <p className="text-lg">{t('noDepartments')}</p>
+          <p className="text-sm">{t('addFirstDepartment')}</p>
           <button
             onClick={() => {
               resetForm();
@@ -226,7 +226,7 @@ const DepartmentList = () => {
             className="btn-primary mt-4 inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            {t('addDepartment') || 'Add Department'}
+            {t('addDepartment')}
           </button>
         </div>
       )}
@@ -234,14 +234,14 @@ const DepartmentList = () => {
       {/* Department Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl p-5 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 flex items-center justify-center">
                   <Building className="w-5 h-5 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold gradient-text">
-                  {editingDepartment ? (t('editDepartment') || 'Edit Department') : (t('addDepartment') || 'Add Department')}
+                  {editingDepartment ? (t('editDepartment')) : (t('addDepartment'))}
                 </h2>
               </div>
               <button
@@ -255,7 +255,7 @@ const DepartmentList = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('departmentName') || 'Department Name'} *
+                  {t('departmentName')} *
                 </label>
                 <input
                   type="text"
@@ -263,14 +263,14 @@ const DepartmentList = () => {
                   value={formData.dept_name}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder={t('departmentNamePlaceholder') || 'e.g., Cardiology'}
+                  placeholder={t('departmentNamePlaceholder')}
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('floorNumber') || 'Floor Number'} *
+                  {t('floorNumber')} *
                 </label>
                 <input
                   type="number"
@@ -278,7 +278,7 @@ const DepartmentList = () => {
                   value={formData.floor_number}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder={t('floorNumberPlaceholder') || 'e.g., 3'}
+                  placeholder={t('floorNumberPlaceholder')}
                   required
                   min="1"
                 />
@@ -295,7 +295,7 @@ const DepartmentList = () => {
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      {editingDepartment ? (t('update') || 'Update') : (t('create') || 'Create')}
+                      {editingDepartment ? (t('update')) : (t('create'))}
                     </>
                   )}
                 </button>
@@ -304,7 +304,7 @@ const DepartmentList = () => {
                   onClick={resetForm}
                   className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
                 >
-                  {t('cancel') || 'Cancel'}
+                  {t('cancel')}
                 </button>
               </div>
             </form>

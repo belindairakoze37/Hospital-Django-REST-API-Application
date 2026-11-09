@@ -6,7 +6,7 @@ import api from '../../api/axios';
 import { useLanguage } from '../../context/LanguageContext';
 
 const AppointmentList = ({ limit }) => {
-  const { t } = useLanguage();
+  const { t, tStatus, formatDate, formatTime } = useLanguage();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -42,7 +42,7 @@ const AppointmentList = ({ limit }) => {
   };
 
   const handleCancel = async (id) => {
-    if (window.confirm('Are you sure you want to cancel this appointment?')) {
+    if (window.confirm(t('errorCancelAppointmentConfirm'))) {
       try {
         await api.patch(`appointments/${id}/cancel/`);
         fetchAppointments();
@@ -124,15 +124,15 @@ const AppointmentList = ({ limit }) => {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(appointment.status)}`}>
-                    {t(appointment.status || 'scheduled')}
+                    {tStatus(appointment.status || 'scheduled')}
                   </span>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    {appointment.appointment_date ? new Date(appointment.appointment_date).toLocaleDateString() : 'N/A'}
+                    {appointment.appointment_date ? formatDate(appointment.appointment_date) : t('notAvailable')}
                   </span>
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    {appointment.appointment_date ? new Date(appointment.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                    {appointment.appointment_date ? formatTime(appointment.appointment_date) : t('notAvailable')}
                   </span>
                 </div>
 

@@ -32,13 +32,13 @@ const DoctorList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this doctor?')) {
+    if (window.confirm(t('errorDeleteDoctorConfirm'))) {
       try {
         await api.delete(`doctors/${id}/`);
         fetchDoctors();
       } catch (error) {
         console.error('Error deleting doctor:', error);
-        alert('Failed to delete doctor. Please try again.');
+        alert(t('errorDeleteDoctor'));
       }
     }
   };
@@ -58,11 +58,11 @@ const DoctorList = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text">{t('doctorManagement')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{t('doctorManagement')}</h1>
           <p className="text-gray-500 mt-2">{t('manageDoctors')}</p>
         </div>
         <button 
