@@ -1,10 +1,19 @@
 # hospital/signals.py
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
-from .models import Appointment, Patient, Doctor, Notification
+from .models import Appointment, Patient, Doctor, Notification, QueueTicket
+from .utils import send_appointment_reminder_email, send_queue_called_email, user_language
 from django.contrib.auth.models import User
+
+
+def _log(message):
+    """Log a line without crashing on consoles that cannot encode emoji."""
+    try:
+        print(message)
+    except UnicodeEncodeError:
+        print(message.encode('ascii', 'replace').decode('ascii'))
 
 @receiver(post_save, sender=Appointment)
 def create_appointment_notification(sender, instance, created, **kwargs):
@@ -26,7 +35,7 @@ def create_appointment_notification(sender, instance, created, **kwargs):
                     message=f'Your appointment with {doctor_name} has been confirmed for {appointment_date}.',
                     link=f'/appointments/{instance.id}'
                 )
-                print(f"✅ Notification sent to patient: {instance.patient.user.username}")
+                _log(f"âœ… Notification sent to patient: {instance.patient.user.username}")
             
             # Notify the doctor (if they have a user account)
             if instance.doctor.user:
@@ -37,7 +46,7 @@ def create_appointment_notification(sender, instance, created, **kwargs):
                     message=f'New appointment with {patient_name} scheduled for {appointment_date}.',
                     link=f'/appointments/{instance.id}'
                 )
-                print(f"✅ Notification sent to doctor: {instance.doctor.user.username}")
+                _log(f"âœ… Notification sent to doctor: {instance.doctor.user.username}")
                 
         elif not created and instance.status == 'cancelled':
             # Appointment Cancelled - Notify the patient and doctor
@@ -52,7 +61,7 @@ def create_appointment_notification(sender, instance, created, **kwargs):
                     message=f'Your appointment with {doctor_name} has been cancelled.',
                     link=f'/appointments/{instance.id}'
                 )
-                print(f"✅ Cancellation notification sent to patient: {instance.patient.user.username}")
+                _log(f"âœ… Cancellation notification sent to patient: {instance.patient.user.username}")
             
             if instance.doctor.user:
                 Notification.objects.create(
@@ -62,7 +71,7 @@ def create_appointment_notification(sender, instance, created, **kwargs):
                     message=f'Appointment with {patient_name} has been cancelled.',
                     link=f'/appointments/{instance.id}'
                 )
-                print(f"✅ Cancellation notification sent to doctor: {instance.doctor.user.username}")
+                _log(f"âœ… Cancellation notification sent to doctor: {instance.doctor.user.username}")
                 
         elif not created and instance.status == 'completed':
             # Appointment Completed - Notify the patient
@@ -75,10 +84,10 @@ def create_appointment_notification(sender, instance, created, **kwargs):
                     message=f'Your appointment with {doctor_name} has been marked as completed.',
                     link=f'/appointments/{instance.id}'
                 )
-                print(f"✅ Completion notification sent to patient: {instance.patient.user.username}")
+                _log(f"âœ… Completion notification sent to patient: {instance.patient.user.username}")
                 
     except Exception as e:
-        print(f"❌ Error creating appointment notification: {e}")
+        _log(f"âŒ Error creating appointment notification: {e}")
 
 
 @receiver(post_save, sender=Patient)
@@ -98,21 +107,21 @@ def create_patient_notification(sender, instance, created, **kwargs):
                     message=f'{patient_name} has been registered as a new patient.',
                     link=f'/patients/{instance.id}'
                 )
-                print(f"✅ Patient registration notification sent to admin: {user.username}")
+                _log(f"âœ… Patient registration notification sent to admin: {user.username}")
                 
             # Also notify the patient themselves if they have a user account
             if instance.user:
                 Notification.objects.create(
                     user=instance.user,
                     notification_type='patient_registered',
-                    title='Welcome to MediCare',
+                    title='Welcome to QueueCare',
                     message=f'Welcome {patient_name}! Your patient account has been created successfully.',
                     link=f'/patients/{instance.id}'
                 )
-                print(f"✅ Welcome notification sent to patient: {instance.user.username}")
+                _log(f"âœ… Welcome notification sent to patient: {instance.user.username}")
                 
     except Exception as e:
-        print(f"❌ Error creating patient notification: {e}")
+        _log(f"âŒ Error creating patient notification: {e}")
 
 
 @receiver(post_save, sender=Doctor)
@@ -131,41 +140,112 @@ def create_doctor_notification(sender, instance, created, **kwargs):
                     message=f'{doctor_name} has been added to the staff.',
                     link=f'/doctors/{instance.id}'
                 )
-                print(f"✅ Doctor notification sent to admin: {user.username}")
+                _log(f"âœ… Doctor notification sent to admin: {user.username}")
                 
             # Also notify the doctor themselves if they have a user account
             if instance.user:
                 Notification.objects.create(
                     user=instance.user,
                     notification_type='doctor_assigned',
-                    title='Welcome to MediCare',
+                    title='Welcome to QueueCare',
                     message=f'Welcome {doctor_name}! You have been added as a doctor.',
                     link=f'/doctors/{instance.id}'
                 )
-                print(f"✅ Welcome notification sent to doctor: {instance.user.username}")
+                _log(f"âœ… Welcome notification sent to doctor: {instance.user.username}")
                 
     except Exception as e:
-        print(f"❌ Error creating doctor notification: {e}")
+        _log(f"âŒ Error creating doctor notification: {e}")
+
+
+@receiver(pre_save, sender=QueueTicket)
+def remember_ticket_status(sender, instance, **kwargs):
+    """Cache the stored status so the post_save hook can detect the transition."""
+    if not instance.pk:
+        return
+    instance._previous_status = (
+        QueueTicket.objects.filter(pk=instance.pk)
+        .values_list('status', flat=True)
+        .first()
+    )
+
+
+@receiver(post_save, sender=QueueTicket)
+def queue_ticket_notifications(sender, instance, created, **kwargs):
+    """Email the patient as soon as their number is called.
+
+    Only the transition into ``called`` sends mail, so re-saving a ticket that
+    is already called never double-mails the patient. The address comes from
+    the ticket itself first, which is what makes this work for public
+    walk-ins who have no user account.
+    """
+    if instance.status != 'called':
+        return
+    if getattr(instance, '_previous_status', None) == 'called':
+        return
+
+    email = instance.contact_email
+    if not email:
+        _log(f"No email on file for ticket {instance.queue_number}; skipping call email")
+        return
+
+    send_queue_called_email(
+        email,
+        instance.display_name,
+        instance.queue_number,
+        instance.room_number,
+        language=user_language(instance.patient.user if instance.patient_id else None),
+    )
+    _log(f"Queue call email sent to {email} for ticket {instance.queue_number}")
 
 
 def send_appointment_reminders():
-    """Function to send appointment reminders (to be run by a scheduled task)"""
+    """Email + in-app reminders for tomorrow's appointments.
+
+    ``Appointment.reminder_sent`` keeps this idempotent: running the command
+    twice in a day never double-mails a patient, and reminders also reach
+    patients without an account as long as a patient email is on file.
+
+    Returns the list of addresses that were emailed.
+    """
+    emailed = []
     try:
         today = timezone.now().date()
         tomorrow = today + timedelta(days=1)
-        
-        # Get appointments for tomorrow
-        tomorrow_appointments = Appointment.objects.filter(
+
+        # Get appointments for tomorrow that have not been reminded yet
+        tomorrow_appointments = Appointment.objects.select_related(
+            'patient__user', 'doctor__user'
+        ).filter(
             appointment_date__date=tomorrow,
-            status='scheduled'
+            status='scheduled',
+            reminder_sent=False,
         )
-        
+
         reminder_count = 0
         for appointment in tomorrow_appointments:
             patient_name = f"{appointment.patient.first_name} {appointment.patient.last_name}"
             doctor_name = f"Dr. {appointment.doctor.first_name} {appointment.doctor.last_name}"
             appointment_time = appointment.appointment_date.strftime("%I:%M %p")
-            
+
+            # Email the patient (works for walk-ins, who have no user account)
+            patient_email = (
+                appointment.patient.user.email
+                if appointment.patient.user_id
+                else appointment.patient.email
+            )
+            patient_email = patient_email or appointment.patient.email
+            patient_language = user_language(
+                appointment.patient.user if appointment.patient.user_id else None
+            )
+            if send_appointment_reminder_email(
+                patient_email,
+                appointment.patient.first_name,
+                doctor_name,
+                appointment.appointment_date,
+                language=patient_language,
+            ):
+                emailed.append(patient_email)
+
             # Notify the patient
             if appointment.patient.user:
                 Notification.objects.create(
@@ -176,7 +256,7 @@ def send_appointment_reminders():
                     link=f'/appointments/{appointment.id}'
                 )
                 reminder_count += 1
-            
+
             # Notify the doctor
             if appointment.doctor.user:
                 Notification.objects.create(
@@ -187,10 +267,13 @@ def send_appointment_reminders():
                     link=f'/appointments/{appointment.id}'
                 )
                 reminder_count += 1
-                
-        print(f"✅ Sent {reminder_count} appointment reminders")
-        return reminder_count
-        
+
+            appointment.reminder_sent = True
+            appointment.save(update_fields=['reminder_sent'])
+
+        _log(f"Appointment reminders: {reminder_count} notifications, {len(emailed)} emails")
+        return emailed
+
     except Exception as e:
-        print(f"❌ Error sending reminders: {e}")
-        return 0
+        _log(f"Error sending reminders: {e}")
+        return emailed

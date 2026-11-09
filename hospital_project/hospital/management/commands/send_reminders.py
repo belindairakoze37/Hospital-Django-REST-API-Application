@@ -3,8 +3,15 @@ from django.core.management.base import BaseCommand
 from hospital.signals import send_appointment_reminders
 
 class Command(BaseCommand):
-    help = 'Send appointment reminders for tomorrow'
+    help = "Sends email reminders for tomorrow's appointments and marks them as reminded"
 
     def handle(self, *args, **options):
-        count = send_appointment_reminders()
-        self.stdout.write(self.style.SUCCESS(f'✅ Appointment reminders sent successfully: {count} notifications created'))
+        emailed = send_appointment_reminders()
+
+        for address in emailed:
+            self.stdout.write(f"Sent reminder to {address}")
+
+        if emailed:
+            self.stdout.write(self.style.SUCCESS(f"{len(emailed)} reminder email(s) sent"))
+        else:
+            self.stdout.write("No appointments need a reminder right now")

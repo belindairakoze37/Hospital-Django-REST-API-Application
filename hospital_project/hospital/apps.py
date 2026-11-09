@@ -8,4 +8,6 @@ class HospitalConfig(AppConfig):
     def ready(self):
         # Import signals to register them
         import hospital.signals
-        print("✅ Signals loaded successfully")
+        # ASCII only: the Windows console code page (cp1252) cannot encode emoji
+        # and would crash Django startup.
+        print("[hospital] signals loaded")
