@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +27,14 @@ SECRET_KEY = 'django-insecure-$qie6(-bt)eja5p7nz)g$02x=ss945%n)gmy)%29hcm!oqgpzd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        'DJANGO_ALLOWED_HOSTS',
+        'localhost,127.0.0.1,[::1],0.0.0.0,testserver',
+    ).split(',')
+    if host.strip()
+]
 
 
 
@@ -71,7 +80,21 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "http://localhost:3000",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+]
+
+# Also accept any localhost / private-network origin so the app can be opened
+# from a phone or tablet on the same Wi-Fi (e.g. http://192.168.1.20:5173).
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://localhost(:\d+)?$",
+    r"^http://127\.0\.0\.1(:\d+)?$",
+    r"^http://\[::1\](:\d+)?$",
+    r"^http://10(\.\d{1,3}){3}(:\d+)?$",
+    r"^http://192\.168(\.\d{1,3}){2}(:\d+)?$",
+    r"^http://172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}(:\d+)?$",
 ]
 REST_FRAMEWORK = {
      'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -85,6 +108,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    # Rates for the two public marketing endpoints (ScopedRateThrottle).
+    'DEFAULT_THROTTLE_RATES': {
+        'newsletter': '5/min',
+        'support': '5/hour',
+    },
 }
 
 ROOT_URLCONF = 'hospital_project.urls'
@@ -157,9 +185,30 @@ STATIC_URL = 'static/'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+#
+# Django 6 reads mail configuration from MAILERS. The console backend prints
+# every email (queue confirmations, "your turn" notices, appointment reminders)
+# straight into the runserver terminal, which is what we want in development.
 
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Real delivery: replace the MAILERS block above with an SMTP mailer.
+# MAILERS = {
+#     'default': {
+#         'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+#         'HOST': 'smtp.gmail.com',
+#         'PORT': 587,
+#         'USER': 'your_email@gmail.com',
+#         'PASSWORD': 'your_app_password',
+#         'USE_TLS': True,
+#     },
+# }
+
+DEFAULT_FROM_EMAIL = 'noreply@medicare.com'
+
+# Used inside email bodies so patients can follow their live queue position.
+QUEUE_DISPLAY_URL = 'http://localhost:5173/queue/display'
